@@ -1,0 +1,29 @@
+body {
+    background-color: whitesmoke !important;
+}
+.main-content {
+    padding-top: 28px !important;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+}
+.site-brand-text {
+    font-weight: 700 !important;
+    font-size: 1.2rem !important;
+    padding-top: 4px !important;
+}
+.nav-username {
+    padding-left: 4px !important;
+}
+.item .sidebar-header {
+    color: grey !important;
+    padding-top: 10px !important;
+    font-size: 0.8rem !important;
+    letter-spacing: 0.05rem !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+}
+
+.jariyah-text {
+    color: lightseagreen !important;
+    font-weight: bold !important;
+}
