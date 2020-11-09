@@ -53,7 +53,21 @@ return [
             'root' => storage_path('app/public'),
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
-        ],
+				],
+				
+				'public_upload' => [
+					'driver' => 'local',
+					'root' => public_path() . '/assets/img/originals',
+					// 'url' => url('assets/img/user'),
+					'visibility' => 'public',
+				],
+
+				'barcode' => [
+					'driver' => 'local',
+					'root' => public_path() . '/barcode',
+					// 'url' => url('assets/img/user'),
+					'visibility' => 'public',
+				],
 
         's3' => [
             'driver' => 's3',

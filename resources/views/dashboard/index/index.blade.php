@@ -2,9 +2,18 @@
 @section('pagetitle', 'Dashboard')
 @section('content')
 
-<div class="ui grey segment">
-	<h4>Content Title</h4>
-	<div class="ui divider"></div>
+@if ($passnotify)
+<div class="ui red icon message">
+  <i class="exclamation icon"></i>
+  <div class="content">
+    <div class="header">
+      Security Alert!
+    </div>
+    <p>Anda masih menggunakan password default. Segera ubah password anda pada menu <b>Settings</b> atau <b><a href="{{route('user.settings')}}">klik disini</a></b>.</p>
+  </div>
 </div>
+@endif
+
+@include('dashboard.index.parts.welcome')
 
 @endsection

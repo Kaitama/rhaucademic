@@ -4,7 +4,7 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
-	<title>Raudhah Academic System - @yield('pagetitle')</title>
+	<title>{{env('APP_NAME')}} - @yield('pagetitle')</title>
 	
 	<link rel="stylesheet" href="{{asset('assets/semantic/semantic.min.css')}}" />
 	
@@ -28,7 +28,8 @@
 	
 	<div class="pusher">
 		<div class="main-content">
-			@include('dashboard.components.breadcrumb')
+			{{-- @include('dashboard.components.breadcrumbs') --}}
+			{{ Breadcrumbs::render() }}
 			@yield('content')
 		</div>
 	</div>
@@ -36,5 +37,15 @@
 	<script src="{{asset('assets/js/jquery.min.js')}}"></script>
 	<script src="{{asset('assets/semantic/semantic.min.js')}}"></script>
 	<script src="{{asset('assets/js/script.js')}}"></script>
+	<script>
+		$('.message .close').on('click', function() {
+			$(this).closest('.message').transition('fade');
+		});
+		// checkbox toggle
+		$('.ui.checkbox').checkbox();
+		// accordion
+		$('.ui.accordion').accordion();
+	</script>
+	@yield('pagescript')
 </body>
 </html>
