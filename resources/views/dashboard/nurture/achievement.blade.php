@@ -268,7 +268,7 @@
 			minCharacters: 3,
 			apiSettings: {
 				cache: true,
-				url: '{{url("api/students/list/{query}")}}',
+				url: '{{url("dashboard/search/students/{query}")}}',
 			},
 			fields: {
 				remoteValues : 'results', 

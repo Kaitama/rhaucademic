@@ -47,9 +47,14 @@ $td = strtotime($data->dateto);
 			<td>{{$data->student->classroom['name']}}</td>
 		</tr>
 		<tr>
-			<td class="left-col">Keperluan</td>
+			<td class="left-col">Alasan</td>
 			<td>:</td>
-			<td>{{$data->description}}</td>
+			<td>{{$data->reason}}</td>
+		</tr>
+		<tr>
+			<td class="left-col">Keterangan</td>
+			<td>:</td>
+			<td>{{$data->description ?? '-'}}</td>
 		</tr>
 	</table>
 	<p>Surat ini berlaku:</p>

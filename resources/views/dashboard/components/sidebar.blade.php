@@ -51,6 +51,24 @@ $s = Request::segment(2);
 		</div>
 	</a>
 	@endcan
+
+	<div class="item">
+		<div class="sidebar-header">
+			Laporan
+		</div>
+	</div>
+	<a href="{{route('report.permit')}}" class="item{{$s == 'report-permit' ? ' active' : ''}}">
+		<div>
+			<i class="icon file alternate grey"></i>
+			Laporan Perizinan
+		</div>
+	</a>
+	<a href="{{route('arrears.index')}}" class="item{{$s == 'arrears' ? ' active' : ''}}">
+		<div>
+			<i class="icon calendar times grey"></i>
+			Laporan Tunggakan
+		</div>
+	</a>
 	
 	@can('m basdat')
 	<div class="item">
@@ -74,6 +92,18 @@ $s = Request::segment(2);
 		<div>
 			<i class="icon building grey"></i>
 			Asrama
+		</div>
+	</a>
+	<a href="{{route('organization.index')}}" class="item{{$s == 'organization' ? ' active' : ''}}">
+		<div>
+			<i class="icon sitemap grey"></i>
+			Organisasi
+		</div>
+	</a>
+	<a href="{{route('extracurricular.index')}}" class="item{{$s == 'extracurricular' ? ' active' : ''}}">
+		<div>
+			<i class="icon futbol grey"></i>
+			Ekstrakurikuler
 		</div>
 	</a>
 	<a href="{{route('student.index')}}" class="item{{$s == 'student' ? ' active' : ''}}">

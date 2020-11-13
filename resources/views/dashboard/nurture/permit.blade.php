@@ -27,9 +27,20 @@
 							<div class="default text"></div>
 						</div>
 					</div>
-					<div class="field required @error('description') error @enderror">
-						<label>Keperluan Izin</label>
-						<input type="text" name="description" value="{{old('description')}}">
+					<div class="required field @error('reason') @enderror">
+						<label>Alasan</label>
+						<select name="reason" class="ui dropdown">
+							<option value="Berobat">Berobat</option>
+							<option value="Acara Keluarga">Acara Keluarga</option>
+							<option value="Belanja">Belanja</option>
+							<option value="Tugas Pesantren">Tugas Pesantren</option>
+							<option value="Skorsing">Skorsing</option>
+							<option value="Lain-lain">Lain - lain</option>
+						</select>
+					</div>
+					<div class="field">
+						<label>Keterangan</label>
+						<textarea name="description" rows="3">{{old('description')}}</textarea>
 					</div>
 					<div class="field required @error('datefrom') error @enderror">
 						<label>Mulai Tanggal</label>
@@ -80,11 +91,12 @@
 						@endphp
 						<div class="item">
 							<div class="content right floated">
-								<a href="{{route('permit.show', $permit->id)}}" target="_blank" class="ui basic tiny icon button">
+								<a href="{{route('permit.validating', $permit->signature)}}" target="_blank" class="ui tiny icon button"><i class="ui eye icon"></i></a>
+								<a href="{{route('permit.show', $permit->id)}}" target="_blank" class="ui blue tiny icon button">
 									<i class="ui print icon"></i>
 								</a>
 								@can('d pengasuhan')
-								<a class="ui red icon tiny button delete-permit" data-id="{{$permit->id}}" data-photo="{{asset('assets/img/student/' . $mphoto)}}" data-stbk="{{$permit->student['stambuk']}}" data-name="{{$permit->student['name']}}" data-title="{{$permit->description}}" data-active="{{$active}}" data-from="{{$permit->user['name']}}" data-date="{{date('d/m/Y', strtotime($permit->signdate))}}">
+								<a class="ui red icon tiny button delete-permit" data-id="{{$permit->id}}" data-photo="{{asset('assets/img/student/' . $mphoto)}}" data-stbk="{{$permit->student['stambuk']}}" data-name="{{$permit->student['name']}}" data-title="{{$permit->reason}}" data-active="{{$active}}" data-from="{{$permit->user['name']}}" data-date="{{date('d/m/Y', strtotime($permit->signdate))}}">
 									<i class="ui trash icon"></i>
 								</a>
 								@endcan
@@ -98,7 +110,8 @@
 									@else
 									<span class="ui mini red right label">Expired</span>
 									@endif
-									<b>{{$permit->description}}</b> <br> Dari tanggal {{date('d/m/Y', strtotime($permit->datefrom))}} sampai tanggal {{date('d/m/Y', strtotime($permit->dateto))}} pukul {{date('H:i', strtotime($permit->dateto))}} WIB.
+									<b>{{$permit->reason}}</b> <br>
+									{{$permit->description ?? '-'}}<br>Dari tanggal {{date('d/m/Y', strtotime($permit->datefrom))}} sampai tanggal {{date('d/m/Y', strtotime($permit->dateto))}} pukul {{date('H:i', strtotime($permit->dateto))}} WIB.
 								</div>
 								<div class="description" style="font-size: 0.8em">
 									<i>Dikeluarkan oleh <b>{{$permit->user['name']}}</b> pada tanggal {{date('d/m/Y', strtotime($permit->signdate))}}.</i>
@@ -172,7 +185,7 @@
 			minCharacters: 3,
 			apiSettings: {
 				cache: true,
-				url: '{{url("api/students/list/{query}")}}',
+				url: '{{url("dashboard/search/students/{query}")}}',
 			},
 			fields: {
 				remoteValues : 'results', 

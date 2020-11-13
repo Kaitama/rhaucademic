@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\User;
+use App\Tuition;
+use App\Offense;
+use App\Permit;
 
 class DashboardController extends Controller
 {
@@ -22,7 +25,16 @@ class DashboardController extends Controller
 		if (Hash::check('password', $user->password)) {
 			$passnotify = true;
 		}
-		return view('dashboard.index.index', ['passnotify' => $passnotify]);
+		// 
+		$today = date('Y-m-d H:i:s');
+		// $tomorrow = date('Y-m-d H:i:s',strtotime($date1 . "+1 days"));
+		$offenses 	= Offense::where('date', date('Y-m-d'))->count();
+		$tuitions 	= Tuition::where('paydate', date('Y-m-d'))->count();
+		$checkouts	= Permit::where('checkout', '>=', date('Y-m-d'))->where('checkout', '<=', date('Y-m-d H:i:s'))->count();
+		$checkins		= Permit::where('checkin', '>=', date('Y-m-d'))->where('checkin', '<=', date('Y-m-d H:i:s'))->count();
+		
+		
+		return view('dashboard.index.index', ['passnotify' => $passnotify, 'offenses' => $offenses, 'tuitions' => $tuitions, 'checkouts' => $checkouts, 'checkins' => $checkins]);
 	}
 	
 	/**

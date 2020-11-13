@@ -175,10 +175,10 @@ class UserController extends Controller
 				'token' => $success
 			], 200);
 		} 
-			return response()->json([
-				'success' => false,
-				'message' => 'Registrasi gagal.',
-			],401);
+		return response()->json([
+			'success' => false,
+			'message' => 'Registrasi gagal.',
+		],401);
 		
 	}
 	
@@ -192,22 +192,34 @@ class UserController extends Controller
 			]
 		);
 	}
-
-// client userdata
-public function userData()
-{
-	$id = request()->user()->id;
-	$student = Student::where('user_id', $id)->with('classroom')->with('dormroom')->first();
-	// $student['kelas'] = $student->classroom['name'];
-	if($student->photo == null ){
-		if($student->gender == 'P') $student->photo = 'female.jpg';
-		else $student->photo = 'male.jpg';
+	
+	// client userdata
+	public function userData()
+	{
+		$id = request()->user()->id;
+		$student = Student::where('user_id', $id)->with('classroom')->with('dormroom')->first();
+		// $student['kelas'] = $student->classroom['name'];
+		if($student->photo == null ){
+			if($student->gender == 'P') $student->photo = 'female.jpg';
+			else $student->photo = 'male.jpg';
+		}
+		$student->user = request()->user()->name;
+		$student->username = request()->user()->username;
+		$student->email = request()->user()->email;
+		
+		return response()->json(['success' => true, 'data' => $student], 200);
 	}
-	$student->user = request()->user()->name;
-	$student->username = request()->user()->username;
-	$student->email = request()->user()->email;
-
-	return response()->json(['success' => true, 'data' => $student], 200);
-}
-
+	
+	// search staffs
+	public function searchstaffs($q)
+	{
+		
+		$users = User::where('name', 'like', '%' . $q . '%')->where('level', '!=', '1')->where('level', '!=', '9')->get();
+		$data = array();
+		foreach ($users as $res) {
+			$data[] = ['name' => $res->name, 'value' => $res->id];
+		}
+		return response()->json(['success' => true, 'results' => $data]);
+	}
+	
 }

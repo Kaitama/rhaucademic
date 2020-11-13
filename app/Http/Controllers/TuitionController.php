@@ -52,6 +52,21 @@ class TuitionController extends Controller
 		return view('dashboard.tuition.index', ['tuitions' => $tuitions]);
 	}
 	
+	public function arrears(Request $request)
+	{
+		$month = $request->get('month');
+		$year = $request->get('year');
+		$arrears = null;
+		if($month == date('m') && $year == date('Y') && date('d') >= 28 || $month < date('m') && $year <= date('Y') && $year != null){
+			$arrears = Student::doesnthave('tuition','or' ,function($query) use($month, $year) {
+				$query->where('formonth', $month)->where('foryear', $year);
+			})->get();
+			$arrears->month = $month;
+			$arrears->year = $year;
+		} 
+		return view('dashboard.tuition.arrears', ['arrears' => $arrears]);
+	}
+	
 	/**
 	* Show the form for creating a new resource.
 	*

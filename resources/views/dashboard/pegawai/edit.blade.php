@@ -55,8 +55,8 @@
 				</div>
 			</div>
 			
-
-
+			
+			
 			<button type="submit" class="ui labeled icon button green">
 				<i class="save icon"></i>
 				Simpan
@@ -70,72 +70,62 @@
 	</div>
 </div>
 
-	
-	<div id="modal-update-password" class="ui modal tiny">
-		<div class="header">
-			Ubah Password {{$user->name}}
-		</div>
-		<div class="content">
-			<div class="description">
-				<form action="{{route('pegawai.updatepassword')}}" method="post" class="ui form" id="frmuppass">
-					@csrf
-					<input type="hidden" name="id" value="{{$user->id}}">
-					<div class="required field @error('old_password') error @enderror">
-						<label>Password Lama</label>
-						<input type="password" name="old_password">
-					</div>
-					
-					<div class="required field @error('password') error @enderror">
-						<label>Password Baru</label>
-						<input type="password" name="password">
-					</div>
-					
-					<div class="required field">
-						<label>Konfirmasi Password Baru</label>
-						<input type="password" name="password_confirmation">
-					</div>
-				</form>
-			</div>
-		</div>
-		<div class="actions">
-			<div class="ui black deny button">
-				Batal
-			</div>
-			<div class="ui positive right labeled icon button" onclick="event.preventDefault(); document.getElementById('frmuppass').submit();">
-				Ubah password
-				<i class="lock icon"></i>
-			</div>
+
+<div id="modal-update-password" class="ui modal tiny">
+	<div class="header">
+		Ubah Password {{$user->name}}
+	</div>
+	<div class="content">
+		<div class="description">
+			<form action="{{route('pegawai.updatepassword')}}" method="post" class="ui form" id="frmuppass">
+				@csrf
+				<input type="hidden" name="id" value="{{$user->id}}">
+				<div class="required field @error('old_password') error @enderror">
+					<label>Password Lama</label>
+					<input type="password" name="old_password">
+				</div>
+				
+				<div class="required field @error('password') error @enderror">
+					<label>Password Baru</label>
+					<input type="password" name="password">
+				</div>
+				
+				<div class="required field">
+					<label>Konfirmasi Password Baru</label>
+					<input type="password" name="password_confirmation">
+				</div>
+			</form>
 		</div>
 	</div>
+	<div class="actions">
+		<div class="ui black deny button">
+			Batal
+		</div>
+		<div class="ui positive right labeled icon button" onclick="event.preventDefault(); document.getElementById('frmuppass').submit();">
+			Ubah password
+			<i class="lock icon"></i>
+		</div>
+	</div>
+</div>
+
+@endsection
+
+@section('pagescript')
+<script>
+	$("input:text, #attach").click(function() {
+		$(this).parent().find("input:file").click();
+	});
 	
-	@endsection
+	$('input:file', '.ui.action.input')
+	.on('change', function(e) {
+		var name = e.target.files[0].name;
+		$('input:text', $(e.target).parent()).val(name);
+	});
 	
-	@section('pagescript')
-	<script>
-		$("input:text, #attach").click(function() {
-			$(this).parent().find("input:file").click();
-		});
-		
-		$('input:file', '.ui.action.input')
-		.on('change', function(e) {
-			var name = e.target.files[0].name;
-			$('input:text', $(e.target).parent()).val(name);
-		});
-		
-		$('#btn-update-pass').click(function(){
-			$('#modal-update-password').modal('show');
-		});
-		
-		
-		// $('.ui.toggle').click(function(){
-			// // 	chk = $('#chkpass');
-			// 	state = $(this).hasClass('checked');
-			// 	if(state){
-				// 		$('#update-pass').show();
-				// 	} else {
-					// 		$('#update-pass').hide();
-					// 	}
-					
-					// });
-				</script>
-				@endsection
+	$('#btn-update-pass').click(function(){
+		$('#modal-update-password').modal('show');
+	});
+	
+	
+</script>
+@endsection

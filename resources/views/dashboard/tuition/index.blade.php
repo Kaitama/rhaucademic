@@ -40,32 +40,49 @@ $months = ['1' => 'Januari', '2' => 'Februari', '3' => 'Maret', '4' => 'April', 
 		@endcan
 		{{-- LIST PEMBAYARAN --}}
 		<div class="ui divider"></div>
-		<div class="ui basic segment">
-			{{-- form filter --}}
-			<form action="" method="get" id="frm-filter" class="ui form">
-				@csrf
-				<div class="inline fields">
-					<div class="field">
-						<select name="month" class="ui dropdown">
-							<option value="">Pilih bulan</option>
-							@foreach ($months as $key => $val)
-							<option value="{{$key}}"{{app('request')->input('month') == $key ? ' selected' : ''}}>{{$val}}</option>
-							@endforeach
-						</select>
+		<div class="ui stackable two column grid">
+			
+			<div class="column">
+				<div class="ui basic segment">
+					<div class="ui search">
+						<div class="ui left icon input">
+							<input class="prompt" type="text" placeholder="Cari santri">
+							<i class="search icon"></i>
+						</div>
 					</div>
-					<div class="field">
-						<input type="text" name="year" value="{{app('request')->input('year')}}" placeholder="Tahun">
-					</div>
-					<div class="field">
-						<button type="submit" id="btn-filter" class="ui icon button grey"><i class="ui search icon"></i></button>
-					</div>
-					@if($tuitions)
-					<div class="field">
-						<a href="{{route('tuition.index')}}">Clear</a>
-					</div>
-					@endif
 				</div>
-			</form>
+			</div>
+
+			<div class="column">
+				<div class="ui basic segment">
+					{{-- form filter --}}
+					<form action="" method="get" id="frm-filter" class="ui form">
+						@csrf
+						<div class="inline fields">
+							<div class="field">
+								<select name="month" class="ui dropdown">
+									<option value="">Pilih bulan</option>
+									@foreach ($months as $key => $val)
+									<option value="{{$key}}"{{app('request')->input('month') == $key ? ' selected' : ''}}>{{$val}}</option>
+									@endforeach
+								</select>
+							</div>
+							<div class="field">
+								<input type="text" name="year" value="{{app('request')->input('year')}}" placeholder="Tahun">
+							</div>
+							<div class="field">
+								<button type="submit" id="btn-filter" class="ui icon button grey"><i class="ui search icon"></i></button>
+							</div>
+							@if($tuitions)
+							<div class="field">
+								<a href="{{route('tuition.index')}}">Clear</a>
+							</div>
+							@endif
+						</div>
+					</form>
+				</div>
+			</div>
+
 		</div>
 		@if ($tuitions == null)
 		<div class="ui icon message">
@@ -316,6 +333,36 @@ $months = ['1' => 'Januari', '2' => 'Februari', '3' => 'Maret', '4' => 'April', 
 
 @section('pagescript')
 <script>
+	$(document).ready(function(){
+		$('.ui.search').search({
+			minCharacters: 3,
+			apiSettings: {
+				cache: true,
+				url: '{{url("dashboard/search/students/{query}")}}',
+			},
+			fields: {
+				results : 'results', 
+				title		: 'name',  
+				url		 	: 'url'
+			},
+			
+		});
+
+		$('.selectstudents').dropdown({
+			minCharacters: 3,
+			apiSettings: {
+				cache: false,
+				url: '{{url("dashboard/search/students/{query}")}}',
+			},
+			fields: {
+				remoteValues : 'results', 
+				name         : 'name',  
+				value        : 'value',
+				text				 : 'stambuk',
+			}
+		});
+	});
+	
 	$("#export-excel").click(function(){
 		$("#mdl-export").modal('show');
 	})
@@ -371,21 +418,7 @@ $months = ['1' => 'Januari', '2' => 'Februari', '3' => 'Maret', '4' => 'April', 
 		var name = e.target.files[0].name;
 		$('input:text', $(e.target).parent()).val(name);
 	});
-
-	$(document).ready(function(){
-		$('.selectstudents').dropdown({
-			minCharacters: 3,
-			apiSettings: {
-				cache: false,
-				url: '{{url("api/students/list/{query}")}}',
-			},
-			fields: {
-				remoteValues : 'results', 
-				name         : 'name',  
-				value        : 'value',
-				text				 : 'stambuk',
-			}
-		});
-	});
+	
+	
 </script>	
 @endsection

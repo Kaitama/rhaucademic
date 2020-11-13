@@ -27,7 +27,7 @@
 					<input type="text" name="s" placeholder="Cari santri.." value="{{ app('request')->input('s') }}" data-content="Cari stambuk atau nama santri." data-position="left center" data-variation="inverted">
 					<i class="inverted circular search link icon" id="btn-search"></i>
 				</div>
-
+				
 				
 			</form>
 		</div>
@@ -78,7 +78,9 @@
 					<td>{{$student->classroom['name'] ?? '-'}}</td>
 					<td>
 						@if ($student->status)
-						<div class="ui green tiny tag label">Aktif</div>
+						<div class="ui green tiny label"><i class="ui check icon"></i>Aktif</div>
+						@else
+						<div class="ui tiny label"><i class="ui times icon"></i>Nonaktif</div>
 						@endif
 					</td>
 					<td class="middle center aligned">
@@ -91,9 +93,20 @@
 									Profile
 								</a>
 								<div class="divider"></div>
+								@if ($student->status)
+								<div class="item btn-deactivate" data-id="{{$student->id}}" data-name="{{$student->name}}">
+									<i class="times icon"></i>
+									Nonaktifkan
+								</div>
+								@else
+								<div class="item btn-activate" data-id="{{$student->id}}" data-name="{{$student->name}}">
+									<i class="check icon"></i>
+									Aktifkan
+								</div>
+								@endif
 								<a class="item btn-delete" data-id="{{$student->id}}" data-name="{{$student->name}}">
 									<i class="trash icon"></i>
-									Delete
+									Hapus
 								</a>
 							</div>
 						</div>
@@ -108,6 +121,51 @@
 	</div>
 </div>
 
+
+{{-- modal deactivate --}}
+<div class="ui tiny modal" id="modal-deactivate">
+	<div class="header">
+		Nonaktifkan Santri
+	</div>
+	<div class="content">
+		<div class="ui message red">Anda yakin ingin menonaktifkan status santri atas nama <span id="name-deactivate"></span></div>
+		<form action="{{route('student.deactivate')}}" method="post" style="display: none" id="form-deactivate">
+			@csrf
+			<input type="hidden" name="idtodeactivate" value="">
+		</form>
+	</div>
+	<div class="actions">
+		<div class="ui black deny button">
+			Batal
+		</div>
+		<div class="ui negative right labeled icon button" onclick="document.getElementById('form-deactivate').submit()">
+			Nonaktifkan
+			<i class="checkmark icon"></i>
+		</div>
+	</div>
+</div>
+{{-- modal activate --}}
+<div class="ui tiny modal" id="modal-activate">
+	<div class="header">
+		Aktifkan Santri
+	</div>
+	<div class="content">
+		<div class="ui message green">Anda yakin ingin mengaktifkan status santri atas nama <span id="name-activate"></span></div>
+		<form action="{{route('student.activate')}}" method="post" style="display: none" id="form-activate">
+			@csrf
+			<input type="hidden" name="idtoactivate" value="">
+		</form>
+	</div>
+	<div class="actions">
+		<div class="ui black deny button">
+			Batal
+		</div>
+		<div class="ui positive right labeled icon button" onclick="document.getElementById('form-activate').submit()">
+			Aktifkan
+			<i class="checkmark icon"></i>
+		</div>
+	</div>
+</div>
 
 {{-- modal upload excel --}}
 <div class="ui tiny modal" id="modal-upload">
@@ -157,6 +215,24 @@
 		$("#form-upload-excel").submit();
 	});
 	
+	$('.btn-deactivate').click(function(){
+		var id = $(this).data('id');
+		var name = $(this).data('name');
+		$('input[name=idtodeactivate]').val(id);
+		$('#name-deactivate').html(name);
+		$('#modal-deactivate').modal('show');
+		$('.opt.dropdown').dropdown({action: 'select'});
+	})
+
+	$('.btn-activate').click(function(){
+		var id = $(this).data('id');
+		var name = $(this).data('name');
+		$('input[name=idtoactivate]').val(id);
+		$('#name-activate').html(name);
+		$('#modal-activate').modal('show');
+		$('.opt.dropdown').dropdown({action: 'select'});
+	})
+	
 	
 	$("input:text, #attach").click(function() {
 		$(this).parent().find("input:file").click();
@@ -181,7 +257,7 @@
 	
 	// search input
 	$("input[name=s]").popup();
-
+	
 	var sval = $("input[name=s]").val();
 	if(sval){
 		$("#btn-search").removeClass("search");
@@ -199,9 +275,9 @@
 		}
 		$("#form-search").submit();
 	});
-
-
 	
-
+	
+	
+	
 </script>
 @endsection

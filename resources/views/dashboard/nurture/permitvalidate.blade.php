@@ -66,11 +66,46 @@
 				<div class="ui sub header center aligned">{{$data->student['stambuk']}} <br> {{$data->student->classroom['name']}}</div>
 				<div class="ui horizontal divider">&bull;</div>
 				
-				<p class="paragraph">Surat izin keluar dengan keperluan <b>{{$data->description}}</b> berlaku mulai hari <b>{{$data->dayfrom}}</b> tanggal <b>{{$data->textfrom}}</b> sampai dengan <b>{{$data->dayto}}</b> tanggal <b>{{$data->textto}}</b> pukul <b>{{date('H:i', strtotime($data->dateto))}} WIB</b>.</p>
+				<p class="paragraph">Surat izin keluar dengan keperluan <b>{{$data->reason}}</b>{{$data->description ? ' (' . $data->description .')' : ''}}. Surat ini berlaku mulai hari <b>{{$data->dayfrom}}</b> tanggal <b>{{$data->textfrom}}</b> sampai dengan <b>{{$data->dayto}}</b> tanggal <b>{{$data->textto}}</b> pukul <b>{{date('H:i', strtotime($data->dateto))}} WIB</b>.</p>
 				
 				<p class="signature"><b>{{$data->user['name']}}</b> <br> {{date('d/m/Y', strtotime($data->signdate))}}</p>
 			</div>
+			<div class="ui basic segment center aligned">
+				@cannot('m validasi perizinan')
+					<div class="ui orange message">Surat ini hanya dapat divalidasi oleh user yang berwenang.</div>
+				@endcannot
+				@if (!$data->checkout)
+				@can('m validasi perizinan')
+				<form id="checkout" action="{{route('permit.checkout')}}" method="post" style="display: none">
+					@csrf
+					<input type="hidden" name="id" value="{{$data->id}}">
+				</form>
+				<div class="ui negative button fluid large" onclick="document.getElementById('checkout').submit()">Checkout</div>
+				@endcan
+				@endif
+				@if ($data->checkout && !$data->checkin)
+				<div class="ui red message">
+					Santri checkout pada tanggal <b>{{date('d/m/Y', strtotime($data->checkout))}}</b> pukul <b>{{date('H:i', strtotime($data->checkout))}}</b> WIB oleh <b>{{$data->outby}}</b>.
+				</div>
+				@can('m validasi perizinan')
+				<form id="checkin" action="{{route('permit.checkin')}}" method="post" style="display: none">
+					@csrf
+					<input type="hidden" name="id" value="{{$data->id}}">
+				</form>
+				<div class="ui positive button fluid large" onclick="document.getElementById('checkin').submit()">Checkin</div>
+				@endcan
+				@endif
+				@if ($data->checkout && $data->checkin)
+				<div class="ui red message">
+					Santri checkout pada tanggal <b>{{date('d/m/Y', strtotime($data->checkout))}}</b> pukul <b>{{date('H:i', strtotime($data->checkout))}}</b> WIB oleh <b>{{$data->outby}}</b>.
+				</div>
+				<div class="ui green message">
+					Santri checkin pada tanggal <b>{{date('d/m/Y', strtotime($data->checkin))}}</b> pukul <b>{{date('H:i', strtotime($data->checkin))}}</b> WIB oleh <b>{{$data->inby}}</b>.
+				</div>
+				@endif
+			</div>
 		</div>
+		
 	</div>
 </div>
 

@@ -7,6 +7,10 @@ use App\Studentprofile;
 use App\Classroom;
 use App\Dormroom;
 use App\Tuition;
+use App\Achievement;
+use App\Permit;
+use App\Offense;
+use App\Organization;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\StudentsImport;
 use Illuminate\Http\Request;
@@ -22,6 +26,25 @@ class StudentController extends Controller
 		Excel::import(new StudentsImport, $request->file('excel'));
 		
 		return back()->with('success', 'Data santri berhasil di import.');
+	}
+	
+	public function deactivate(Request $request)
+	{
+		$id = $request->idtodeactivate;
+		Student::find($id)->update([
+			'status' => false
+			]
+		);
+		return back()->with('success', 'Santri berhasil dinonaktifkan.');
+	}
+	public function activate(Request $request)
+	{
+		$id = $request->idtoactivate;
+		Student::find($id)->update([
+			'status' => true
+			]
+		);
+		return back()->with('success', 'Santri berhasil diaktifkan.');
 	}
 	
 	public function search(Request $request)
@@ -61,7 +84,7 @@ class StudentController extends Controller
 		
 		return response()->download($zip_file);
 	}
-
+	
 	public function updatephoto(Request $request)
 	{
 		$student = Student::find($request->id);
@@ -90,7 +113,7 @@ class StudentController extends Controller
 	public function index()
 	{
 		//
-		$students = Student::where('status', 1)->with('dormroom')->with('classroom')->paginate(20);
+		$students = Student::paginate(20);
 		return view('dashboard.student.index', ['students' => $students]);
 	}
 	
@@ -187,9 +210,34 @@ class StudentController extends Controller
 		//
 		$classrooms = Classroom::all();
 		$dormrooms = Dormroom::all();
-		$student = Student::where('stambuk', $stambuk)->with('studentprofile')->with('classroom')->with('tuition')->first();
+		$student = Student::where('stambuk', $stambuk)->first();
+		$tuitions = Tuition::where('student_id', $student->id)->simplePaginate(10, ['*'], 'tuitions');
+		$achievements = Achievement::where('student_id', $student->id)->simplePaginate(10, ['*'], 'achievements');
+		$permits = Permit::where('student_id', $student->id)->simplePaginate(10, ['*'], 'permits');
+		$offenses = Offense::where('student_id', $student->id)->simplePaginate(10, ['*'], 'offenses');
+		$organizations = $student->organization()->wherePivot('student_id', $student->id)->simplePaginate(10, ['*'], 'organizations');
+		$extracurriculars = $student->extracurricular()->wherePivot('student_id', $student->id)->simplePaginate(10, ['*'], 'extracurriculars');
+		
+		
 		if(!$student) return redirect()->route('student.index');
-		return view('dashboard.student.profile', ['student' => $student, 'dormrooms' => $dormrooms->sortBy('building'), 'classrooms' => $classrooms->sortBy('level'), 'hobbies' => $this->hobbies, 'wishes' => $this->wishes, 'educations' => $this->educations, 'religions' => $this->religions, 'donaters' => $this->donaters, 'reasons' => $this->reasons]);
+		return view('dashboard.student.profile', [
+			'student' => $student, 
+			'dormrooms' => $dormrooms->sortBy('building'), 
+			'classrooms' => $classrooms->sortBy('level'), 
+			'hobbies' => $this->hobbies, 
+			'wishes' => $this->wishes, 
+			'educations' => $this->educations, 
+			'religions' => $this->religions, 
+			'donaters' => $this->donaters, 
+			'reasons' => $this->reasons, 
+			'tuitions' => $tuitions,
+			'achievements' => $achievements,
+			'permits' => $permits,
+			'offenses' => $offenses,
+			'organizations' => $organizations,
+			'extracurriculars' => $extracurriculars,
+			]
+		);
 	}
 	
 	
@@ -254,5 +302,16 @@ class StudentController extends Controller
 		}
 		$student->delete();
 		return back()->with('success', 'Santri berhasil dihapus.');
+	}
+	
+	public function jsonsearch($s)
+	{
+		$results = Student::where('stambuk','like','%'.$s.'%')->orWhere('name','like','%'.$s.'%')->where('status', true)->get();
+		// $results = Student::all();
+		$data = array();
+		foreach ($results as $res) {
+			$data[] = ['name' => $res->stambuk . ' - ' . $res->name, 'value' => $res->id, 'text' => $res->name, 'stambuk' => $res->stambuk, 'url' => route('student.profile', $res->stambuk)];
+		}
+		return response()->json(['success' => true, 'results' => $data]);
 	}
 }

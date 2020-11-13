@@ -2,12 +2,22 @@
 
 // use App\User;
 use App\Student;
+use App\Organization;
+use App\Extracurricular;
 
 /**
  * Index
  */
 Breadcrumbs::for('dashboard.index', function ($trail) {
 	$trail->push(env('APP_NAME'), route('dashboard.index'));
+});
+
+/**
+ * Report Permit
+ */
+Breadcrumbs::for('report.permit', function ($trail) {
+	$trail->parent('dashboard.index');
+	$trail->push('Laporan Perizinan', route('report.permit'));
 });
 
 /**
@@ -43,6 +53,14 @@ Breadcrumbs::for('tuition.index', function ($trail) {
 });
 
 /**
+ * Arrears
+ */
+Breadcrumbs::for('arrears.index', function ($trail) {
+	$trail->parent('dashboard.index');
+	$trail->push('Tunggakan Uang Sekolah', route('arrears.index'));
+});
+
+/**
  * Pegawai
  */
 Breadcrumbs::for('pegawai.index', function ($trail) {
@@ -72,6 +90,30 @@ Breadcrumbs::for('classroom.index', function ($trail) {
 Breadcrumbs::for('dormroom.index', function ($trail) {
 	$trail->parent('dashboard.index');
 	$trail->push('Asrama', route('dormroom.index'));
+});
+/**
+ * Extracurricular
+ */
+Breadcrumbs::for('extracurricular.index', function ($trail) {
+	$trail->parent('dashboard.index');
+	$trail->push('Ekstrakurikuler', route('extracurricular.index'));
+});
+Breadcrumbs::for('extracurricular.show', function ($trail, $id) {
+	$ext = Extracurricular::find($id);
+	$trail->parent('extracurricular.index');
+	$trail->push($ext->name, route('extracurricular.show', $ext));
+});
+/**
+ * Organization
+ */
+Breadcrumbs::for('organization.index', function ($trail) {
+	$trail->parent('dashboard.index');
+	$trail->push('Organisasi', route('organization.index'));
+});
+Breadcrumbs::for('organization.show', function ($trail, $id) {
+	$org = Organization::find($id);
+	$trail->parent('organization.index');
+	$trail->push($org->name, route('organization.show', $org));
 });
 /**
  * Student

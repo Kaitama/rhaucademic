@@ -12,6 +12,7 @@ use App\Offense;
 use App\Achievement;
 use App\Permit;
 use App\Student;
+use App\Extracurricular;
 
 class User extends Authenticatable
 {
@@ -71,5 +72,11 @@ class User extends Authenticatable
 	public function student()
 	{
 		return $this->hasOne(Student::class);
+	}
+
+	// relation to extracurricular
+	public function extracurricular()
+	{
+		return $this->hasMany(Extracurricular::class);
 	}
 }

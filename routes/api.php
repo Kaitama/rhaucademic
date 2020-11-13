@@ -19,28 +19,31 @@ use App\Http\Controllers\ApiController;
 
 
 
-Route::get('students/suggest/', function(Request $request){
-	$s = $request->get('search');
-	$data = Student::where('stambuk','like','%'.$s.'%')->orWhere('name','like','%'.$s.'%')->get();
-	$data->map(function ($dt) {
-		$url = asset('assets/img/student');
-		if($dt->photo) { $img = $url . '/' . $dt->photo; }
-		else {if($dt->gender == 'P') $img = $url . '/female.jpg'; else $img = $url . '/male.jpg';}
-		$dt['image'] = $img;
-		return $dt;
-	});
-	return response()->json(["data" => $data]);
-});
+// Route::get('students/suggest/', function(Request $request){
+// 	$s = $request->get('search');
+// 	$data = Student::where('stambuk','like','%'.$s.'%')->orWhere('name','like','%'.$s.'%')->get();
+// 	$data->map(function ($dt) {
+// 		$url = asset('assets/img/student');
+// 		if($dt->photo) { $img = $url . '/' . $dt->photo; }
+// 		else {if($dt->gender == 'P') $img = $url . '/female.jpg'; else $img = $url . '/male.jpg';}
+// 		$dt['image'] = $img;
+// 		return $dt;
+// 	});
+// 	return response()->json(["data" => $data]);
+// });
 
-Route::get('students/list/{query}', function($s){
-	$results = Student::where('stambuk','like','%'.$s.'%')->orWhere('name','like','%'.$s.'%')->get();
-	// $results = Student::all();
-	$data = array();
-	foreach ($results as $res) {
-		$data[] = ['name' => $res->stambuk . ' - ' . $res->name, 'value' => $res->id, 'text' => $res->name, 'stambuk' => $res->stambuk];
-	}
-	return response()->json(['success' => true, 'results' => $data]);
-});
+// search students
+// Route::get('students/list/{query}', function($s){
+// 	$results = Student::where('stambuk','like','%'.$s.'%')->orWhere('name','like','%'.$s.'%')->where('status', true)->get();
+// 	// $results = Student::all();
+// 	$data = array();
+// 	foreach ($results as $res) {
+// 		$data[] = ['name' => $res->stambuk . ' - ' . $res->name, 'value' => $res->id, 'text' => $res->name, 'stambuk' => $res->stambuk, 'url' => route('student.profile', $res->stambuk)];
+// 	}
+// 	return response()->json(['success' => true, 'results' => $data]);
+// });
+
+
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
 	return $request->user();

@@ -13,7 +13,9 @@ use App\Http\Controllers\AchievementController;
 use App\Http\Controllers\OffenseController;
 use App\Http\Controllers\PermitController;
 use App\Http\Controllers\UserController;
-
+use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\DatareportController;
+use App\Http\Controllers\ExtracurricularController;
 
 
 
@@ -22,7 +24,6 @@ Route::get('/', function () {
 	return redirect()->route('dashboard.index');
 });
 
-Route::get('/permit/validate/{hash}', [PermitController::class, 'validating'])->name('permit.validating');
 
 Auth::routes(['register' => false]);
 
@@ -35,6 +36,21 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
 	
 	// PROFILE SANTRI
 	Route::get('/student/p/{stambuk}', [StudentController::class, 'show'])->name('student.profile');
+	
+	
+	// SEARCH USER
+	Route::get('search/staffs/{query}', [UserController::class, 'searchstaffs'])->name('search.staffs');
+
+	// SEARCH STUDENT
+	Route::get('search/students/{query}', [StudentController::class, 'jsonsearch'])->name('search.students');
+	
+	// VALIDASI PERMIT
+	Route::get('/permit/validate/{hash}', [PermitController::class, 'validating'])->name('permit.validating');
+	Route::post('/permit/validate/checkout', [PermitController::class, 'checkout'])->name('permit.checkout');
+	Route::post('/permit/validate/checkin', [PermitController::class, 'checkin'])->name('permit.checkin');
+	
+	// LAPORAN
+	Route::get('/report-permit', [DatareportController::class, 'permit'])->name('report.permit');
 	
 	// PENGASUHAN
 	Route::group(['middleware' => ['role_or_permission:developer|m pengasuhan']], function () {
@@ -70,6 +86,8 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
 	Route::group(['middleware' => ['role_or_permission:developer|m keuangan']], function () {
 		Route::get('/tuition', [TuitionController::class, 'index'])->name('tuition.index');
 		Route::post('/excel/export/tuition', [ExcelController::class, 'exporttuition'])->name('excel.export.tuition');
+		// tunggakan
+		Route::get('/arrears', [TuitionController::class, 'arrears'])->name('arrears.index');
 		// update delete uang sekolah
 		Route::group(['middleware' => ['role_or_permission:developer|c keuangan|u keuangan|d keuangan']], function () {
 			Route::get('/excel/download/template/tuition', [ExcelController::class, 'downloadtemplatetuition'])->name('excel.template.tuition');
@@ -101,6 +119,29 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
 		Route::post('/dormroom/building/update', [BuildingController::class, 'update'])->name('dormroom.building.update');
 		Route::post('/dormroom/building/destroy', [BuildingController::class, 'destroy'])->name('dormroom.building.destroy');
 		
+		// MENU ORGANISASI
+		Route::get('/organization', [OrganizationController::class, 'index'])->name('organization.index');
+		Route::post('/organization/store', [OrganizationController::class, 'store'])->name('organization.store');
+		Route::get('/organization/show/{id}', [OrganizationController::class, 'show'])->name('organization.show');
+		Route::post('/organization/inactivate', [OrganizationController::class, 'inactivate'])->name('organization.inactivate');
+		Route::post('/organization/activate', [OrganizationController::class, 'activate'])->name('organization.activate');
+		Route::post('/organization/deactivate', [OrganizationController::class, 'deactivate'])->name('organization.deactivate');
+		Route::post('/organization/editstudents/{id}', [OrganizationController::class, 'editstudents'])->name('organization.editstudents');
+		Route::post('/organization/toggleisactive/{id}', [OrganizationController::class, 'toggleisactive'])->name('organization.toggleisactive');
+		Route::post('/organization/update', [OrganizationController::class, 'update'])->name('organization.update');
+		Route::post('/organization/destroy', [OrganizationController::class, 'destroy'])->name('organization.destroy');
+		Route::post('/organization/addstudents', [OrganizationController::class, 'addstudents'])->name('organization.addstudents');
+		
+		// MENU EKSTRAKURIKULER
+		Route::get('/extracurricular', [ExtracurricularController::class, 'index'])->name('extracurricular.index');
+		Route::post('/extracurricular/store', [ExtracurricularController::class, 'store'])->name('extracurricular.store');
+		Route::get('/extracurricular/show/{id}', [ExtracurricularController::class, 'show'])->name('extracurricular.show');
+		Route::post('/extracurricular/toggle', [ExtracurricularController::class, 'toggle'])->name('extracurricular.toggle');
+		Route::post('/extracurricular/addstudents', [ExtracurricularController::class, 'addstudents'])->name('extracurricular.addstudents');
+		Route::post('/extracurricular/toggleisactive', [ExtracurricularController::class, 'toggleisactive'])->name('extracurricular.toggleisactive');
+		Route::post('/extracurricular/update', [ExtracurricularController::class, 'update'])->name('extracurricular.update');
+		
+		
 		// MENU PEGAWAI
 		Route::get('/staff', [PegawaiController::class, 'index'])->name('pegawai.index');
 		Route::post('/staff/store', [PegawaiController::class, 'store'])->name('pegawai.store');
@@ -112,6 +153,8 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
 		// MENU SANTRI
 		
 		Route::get('/student', [StudentController::class, 'index'])->name('student.index');
+		Route::post('/student/deactivate', [StudentController::class, 'deactivate'])->name('student.deactivate');
+		Route::post('/student/activate', [StudentController::class, 'activate'])->name('student.activate');
 		Route::post('/excel/upload/data/student', [StudentController::class, 'import'])->name('excel.data.student');
 		Route::post('/student/update/photo', [StudentController::class, 'updatephoto'])->name('student.update.photo');
 		Route::get('/student/download/barcode', [StudentController::class, 'downloadbarcode'])->name('student.download.barcode');

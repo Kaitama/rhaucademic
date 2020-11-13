@@ -19,9 +19,14 @@ class CreatePermitsTable extends Migration
 			$table->foreignId('user_id')->nullable()->constrained()->onDelete('set null')->cascadeOnUpdate();
 			$table->dateTime('datefrom');
 			$table->dateTime('dateto');
-			$table->text('description');
+			$table->string('reason');
+			$table->text('description')->nullable();
 			$table->dateTime('signdate');
 			$table->string('signature');
+			$table->timestamp('checkout')->nullable();
+			$table->bigInteger('checkedout_by')->nullable();
+			$table->timestamp('checkin')->nullable();
+			$table->bigInteger('checkedin_by')->nullable();
 			$table->timestamps();
 		});
 	}

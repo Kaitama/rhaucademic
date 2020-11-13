@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Permit;
 use App\Student;
+use App\User;
 use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -66,6 +67,7 @@ class PermitController extends Controller
 			'user_id'			=> Auth::id(),
 			'datefrom'		=> $this->dateFormat($request->datefrom),
 			'dateto'			=> $this->dateFormat($request->dateto) . ' ' . $request->timeto,
+			'reason'			=> $request->reason,
 			'description'	=> $request->description,
 			'signdate'		=> $this->dateFormat($request->signdate),
 			'signature'		=> $sign
@@ -76,8 +78,8 @@ class PermitController extends Controller
 	}
 	
 	/**
-	 * VALIDATING PERMIT
-	 */
+	* VALIDATING PERMIT
+	*/
 	public function validating(Permit $permit, $hash)
 	{
 		$data = $permit->where('signature', $hash)->first();
@@ -86,18 +88,34 @@ class PermitController extends Controller
 			$data->textfrom = date('d', strtotime($data->datefrom)) . ' ' . $this->getMonthName($data->datefrom) . ' ' .date('Y', strtotime($data->datefrom));
 			$data->dayto = $this->getDayName($data->dateto);
 			$data->textto = date('d', strtotime($data->dateto)) . ' ' . $this->getMonthName($data->dateto) . ' ' .date('Y', strtotime($data->dateto));
-			if(date('Y-m-d H:i:s') <= $data->dateto) $data->active = true; else $data->active = false;
+			$data->inby = User::where('id', $data->checkedin_by)->pluck('name')->first();
+			$data->outby = User::where('id', $data->checkedout_by)->pluck('name')->first();
+			if(date('Y-m-d H:i:s') <= $data->dateto && !$data->checkin) $data->active = true; else $data->active = false;
 			return view('dashboard.nurture.permitvalidate', ['data' => $data]);
 		} else {
 			return abort(404);
 		}
 		
-		// if(date('Y-m-d H:i:s') <= $data->dateto) $active = true; else $active = false;
-		// if($active) 
-		// {
-
-		// }
 		
+	}
+	
+	public function checkout(Request $req)
+	{
+		Permit::find($req->id)->update([
+			'checkout' => now(),
+			'checkedout_by'	=> Auth::id(),
+			]
+		);
+		return back();
+	}
+	public function checkin(Request $req)
+	{
+		Permit::find($req->id)->update([
+			'checkin' => now(),
+			'checkedin_by'	=> Auth::id(),
+			]
+		);
+		return back();
 	}
 	
 	/**

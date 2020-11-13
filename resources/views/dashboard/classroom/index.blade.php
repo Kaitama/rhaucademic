@@ -19,8 +19,16 @@
 						<label>Tingkat</label>
 						<select name="level" class="ui dropdown">
 							<option value="">Pilih tingkatan kelas</option>
-							@for ($i = 1; $i < 7; $i++)
+							@for ($i = 1; $i <= 8; $i++)
+							@if ($i < 7)
 							<option value="{{$i}}">Tingkat {{$i}}</option>
+							@endif
+							@if ($i == 7)
+							<option value="{{$i}}">Tingkat 1INT</option>
+							@endif
+							@if ($i == 8)
+							<option value="{{$i}}">Tingkat 3INT</option>
+									@endif
 							@endfor
 						</select>
 					</div>
@@ -47,9 +55,11 @@
 				<h3>Data Ruang Kelas</h3>
 			</div>
 			<div class="ui segment">
-				@for ($i = 1; $i < 7; $i++)
-				<h3 class="ui top attached segment">
-					Tingkat {{$i}}
+				@for ($i = 1; $i <= 8; $i++)
+				<h3 class="ui top attached segment grey inverted">
+					@if ($i <= 6) Tingkat {{$i}} @endif
+					@if ($i == 7) Tingkat 1INT @endif
+					@if ($i == 8) Tingkat 3INT @endif
 				</h3>
 				@foreach ($classrooms as $classroom)
 				@if ($i == $classroom->level)
