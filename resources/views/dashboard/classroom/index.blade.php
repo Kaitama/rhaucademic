@@ -28,7 +28,7 @@
 							@endif
 							@if ($i == 8)
 							<option value="{{$i}}">Tingkat 3INT</option>
-									@endif
+							@endif
 							@endfor
 						</select>
 					</div>
@@ -68,18 +68,21 @@
 						<div class="item">
 							<div class="right floated content">
 								<div class="ui small basic icon buttons">
-									<button class="ui button update-classroom" data-classroomid="{{$classroom->id}}" data-classroomname="{{$classroom->name}}" data-classroomcapacity="{{$classroom->capacity}}" data-classroomlevel="{{$classroom->level}}">
+									<button class="ui button" data-tooltip="Tambah santri" data-inverted="" onclick="addStudents({{$classroom->id}}, '{{$classroom->name}}')">
+										<i class="plus icon"></i>
+									</button>
+									<button class="ui button" data-tooltip="Edit kelas" data-inverted="" onclick="editClassroom({{$classroom->id}}, '{{$classroom->name}}', {{$classroom->capacity}}, '{{$classroom->level}}')">
 										<i class="edit icon"></i>
 									</button>
-									<button class="ui button delete-classroom" data-classroomid="{{$classroom->id}}" data-classroomname="{{$classroom->name}}">
+									<button class="ui button" data-tooltip="Hapus kelas" data-inverted="" onclick="deleteClassroom({{$classroom->id}}, '{{$classroom->name}}')">
 										<i class="trash icon"></i>
 									</button>
 								</div>
 							</div>
 							
 							<div class="content">
-								<div class="header">{{$classroom->name}}</div>
-								<p>Kapasitas {{$classroom->capacity}} santri.</p>
+								<a href="{{route('classroom.show', $classroom->id)}}" class="header">{{$classroom->name}}</a>
+								<p>Jumlah santri {{$classroom->student->count()}}/{{$classroom->capacity}}.</p>
 							</div>
 						</div>
 					</div>
@@ -130,6 +133,35 @@
 	</div>
 </div>
 
+{{-- modal addStudents --}}
+<div id="modal-add-students" class="ui modal tiny">
+	<div class="header">
+		Tambah Santri Kelas <span id="namakelas"></span>
+	</div>
+	<form class="ui form content" id="form-add-students" method="POST" action="{{route('classroom.addstudents')}}">
+		@csrf
+		<input type="hidden" name="id" id="classroom-id-add-students" value="">
+		{{-- form field --}}
+		<div class="field required @error('students') error @enderror">
+			<label>Nama Santri</label>
+			<div class="ui fluid search multiple selection dropdown selectstudents">
+				<input type="hidden" name="students" value="{{old('students')}}">
+				<i class="search icon"></i>
+				<div class="default text"></div>
+			</div>
+		</div>
+	</form>
+	<div class="actions">
+		<div class="ui black deny button">
+			Batal
+		</div>
+		<button onclick="document.getElementById('form-add-students').submit();" class="ui positive right labeled icon button">
+			Simpan
+			<i class="save icon"></i>
+		</button>
+	</div>
+</div>
+
 
 @include('dashboard.components.modaldelete')
 
@@ -137,25 +169,45 @@
 
 @section('pagescript')
 <script>
-	$(".update-classroom").click(function(){
-		var id = $(this).data('classroomid');
-		var name = $(this).data('classroomname');
-		var capacity = $(this).data('classroomcapacity');
-		var level = $(this).data('classroomlevel');
+	
+	$(document).ready(function(){
+		$('.selectstudents').dropdown({
+			minCharacters: 3,
+			apiSettings: {
+				cache: true,
+				url: '{{url("dashboard/search/students/{query}")}}',
+			},
+			fields: {
+				remoteValues : 'results', 
+				name         : 'name',  
+				value        : 'value'
+			}
+		});
+	});
+	
+	function editClassroom(id,name,capacity,level)
+	{
 		$("#select-level").val(level).find("option[value="+ level +"]").attr('selected', true);
 		$('.ui.dropdown').dropdown();
 		$("#classroom-id-update").val(id);
 		$("#classroom-name-update").val(name);
 		$("#classroom-capacity-update").val(capacity);
 		$("#modal-edit-classroom").modal('show');
-	});
-	$(".delete-classroom").click(function(){
-		var id = $(this).data('classroomid');
-		var name = $(this).data('classroomname');
+	}
+	
+	function deleteClassroom(id, name)
+	{
 		$("#message").html("Menghapus data Kelas " + name + " memungkinkan sebagian santri tidak memiliki kelas.");
 		$("#data-id").val(id);
 		$('#form-delete').attr("action", "{{route('classroom.destroy')}}");
 		$("#modal-delete").modal('show');
-	});
+	}
+	
+	function addStudents(id, name)
+	{
+		$('#namakelas').html(name);
+		$('#classroom-id-add-students').val(id);
+		$('#modal-add-students').modal('show');
+	}
 </script>
 @endsection

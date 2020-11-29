@@ -60,8 +60,34 @@
 						@php echo '<img class="ui fluid image" src="data:image/png;base64,' . DNS1D::getBarcodePNG($student->stambuk, "C128", 3, 64) . '" alt="barcode"   />'; @endphp
 					</div>
 					{{-- /barcode --}}
-					
+					@php
+					switch ($student->status) {
+						case 1: $status = 'AKTIF'; break;
+						case 2: $status = 'ALUMNI'; break;
+						case 3: $status = 'SKORSING'; break;
+						case 4: $status = 'CUTI'; break;
+						case 5: $status = 'SAKIT'; break;
+						case 6: $status = 'AKADEMIK'; break;
+						case 7: $status = 'EKONOMI'; break;
+						case 8: $status = 'LAINNYA'; break;
+						default: $status = ''; break;
+					}
+					@endphp
 					<div id="ddata1" class="ui fluid list">
+						<div class="item">
+							<div class="content">
+								<div class="description">Status</div>
+								<div class="header">{{$student->status == 1 ? 'AKTIF' : 'NONAKTIF'}}</div>
+							</div>
+						</div>
+						@if ($student->status != 1)
+						<div class="item">
+							<div class="content">
+								<div class="description">Keterangan</div>
+								<div class="header">{{$status}}{{$student->description ? ' - ' . $student->description : ''}}</div>
+							</div>
+						</div>
+						@endif
 						<div class="item">
 							<div class="content">
 								<div class="description">Stambuk</div>
@@ -123,6 +149,7 @@
 	</div>
 	{{-- right column --}}
 	<div class="eleven wide column">
+		
 		{{-- tab menu --}}
 		<div class="ui top attached tabular menu">
 			<a class="item active" data-tab="biodata">Biodata</a>
@@ -569,6 +596,11 @@
 		{{-- /school --}}
 		
 		
+		@if (Auth::user()->level == 9)
+		<div class="ui basic segment"></div>
+		@include('dashboard.components.slider')
+		@endif
+		
 		@include('dashboard.student.activity')
 		
 	</div>
@@ -591,6 +623,18 @@
 </script>
 @endcan
 <script>
+	$(document).ready(function(){
+		$('.slider').slick({
+			autoplay: true,
+			autoplaySpeed: 2000,
+			dots: true,
+			arrows: false,
+			// prevArrow: '<button class="slick-prev ui mini icon button"><i class="ui angle left"></i></button>',
+		});
+		$('.special.cards .image').dimmer({
+			on: 'hover'
+		});
+	});
 	
 	$('#transfer').click(function(){
 		state = $(this).hasClass('checked');

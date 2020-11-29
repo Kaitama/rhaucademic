@@ -10,27 +10,69 @@
 	</div>
 	<div class="ui segment">
 		<div class="ui small basic icon buttons"> 
-			<div class="ui button" id="uploadexcel">
-				<span class="text"><i class="upload icon"></i> Import Excel</span>
+			<div class="ui button dropdown">
+				<div class="text">
+					<i class="upload icon"></i> Import Excel
+				</div>
+				<div class="menu">
+					<a href="{{route('excel.template.student')}}" class="item"><i class="file excel icon"></i> Download Template</a>
+					<div class="item" id="uploadexcel">
+						<i class="cloud upload icon"></i>
+						Upload Excel
+					</div>
+				</div>
 			</div>
-			<a href="{{route('excel.template.student')}}" class="ui button"><i class="download icon"></i> Export Excel</a>
+			
 			<a href="{{route('student.download.barcode')}}" class="ui button"><i class="file archive icon"></i> Download Barcode</a>
 		</div>
 		<a href="{{route('student.create')}}" class="ui labeled icon button green right floated"><i class="plus icon"></i> Tambah Santri</a>
 		{{-- LIST SANTRI --}}
 		<div class="ui divider"></div>
-		<div class="ui basic right aligned segment">
-			<form action="{{route('student.search')}}" method="get" id="form-search">
-				@csrf
-				
-				<div class="ui large icon input">
-					<input type="text" name="s" placeholder="Cari santri.." value="{{ app('request')->input('s') }}" data-content="Cari stambuk atau nama santri." data-position="left center" data-variation="inverted">
-					<i class="inverted circular search link icon" id="btn-search"></i>
-				</div>
-				
-				
-			</form>
+		<div class="ui two column stackable grid">
+			<div class="column">
+				<form action="{{route('student.filter')}}" method="get" id="form-filter" class="ui form">
+					@csrf
+					<div class="inline field">
+						
+						<select name="statfilter" id="selectstatus" class="ui dropdown">
+							<option value="">Filter santri</option>
+							<option value="1"{{app('request')->input('statfilter') == 1 ? ' selected' : ''}}>AKTIF</option>
+							<option value="2"{{app('request')->input('statfilter') == 2 ? ' selected' : ''}}>ALUMNI</option>
+							<option value="3"{{app('request')->input('statfilter') == 3 ? ' selected' : ''}}>SKORSING</option>
+							<option value="4"{{app('request')->input('statfilter') == 4 ? ' selected' : ''}}>CUTI</option>
+							<option value="5"{{app('request')->input('statfilter') == 5 ? ' selected' : ''}}>SAKIT</option>
+							<option value="6"{{app('request')->input('statfilter') == 6 ? ' selected' : ''}}>AKADEMIK</option>
+							<option value="7"{{app('request')->input('statfilter') == 7 ? ' selected' : ''}}>EKONOMI</option>
+							<option value="8"{{app('request')->input('statfilter') == 8 ? ' selected' : ''}}>LAINNYA</option>
+						</select>
+					</div>
+				</form>
+			</div>
+			@php
+			switch (app('request')->input('statfilter')) {
+				case 1: $ket = ' aktif '; break;
+				case 2: $ket = ' alumni '; break;
+				case 3: $ket = ' nonaktif karena skorsing '; break;
+				case 4: $ket = ' nonaktif karena cuti '; break;
+				case 5: $ket = ' nonaktif karena sakit '; break;
+				case 6: $ket = ' nonaktif karena kendala akademik '; break;
+				case 7: $ket = ' nonaktif karena kendala ekonomi '; break;
+				case 8: $ket = ' nonaktif dengan alasan lainnya '; break;
+				default: $ket = ''; break;
+			}
+			@endphp
+			<div class="column right aligned">
+				<form action="{{route('student.search')}}" method="get" id="form-search" class="ui form">
+					@csrf
+					<div class="ui large icon input">
+						<input type="text" name="s" placeholder="Cari santri.." value="{{ app('request')->input('s') }}" data-content="Cari stambuk atau nama santri." data-position="left center" data-variation="inverted">
+						<i class="inverted circular search link icon" id="btn-search"></i>
+					</div>
+				</form>
+			</div>
 		</div>
+		<div class="ui divider"></div>
+		<div class="ui positive message">Menampilkan {{$students->count()}} dari total keseluruhan {{$students->total()}} santri{{$ket}}.</div>
 		<table class="ui celled table">
 			<thead>
 				<tr>
@@ -73,14 +115,21 @@
 						</h4>
 					</td>
 					<td>
-						{{$student->dormroom['name'] ?? '-'}}
+						@if ($student->dormroom)
+						<a href="{{route('dormroom.show',$student->dormroom['id'])}}">{{$student->dormroom['name']}}</a>
+						@else - @endif
 					</td>
-					<td>{{$student->classroom['name'] ?? '-'}}</td>
 					<td>
-						@if ($student->status)
+						@if ($student->classroom)
+						<a href="{{route('classroom.show',$student->classroom['id'])}}">{{$student->classroom['name']}}</a>
+						@else - @endif
+					</td>
+					<td>
+						@php $st = ['2' => 'Alumni', '3' => 'Skorsing', '4' => 'Cuti', '5' => 'Sakit', '6' => 'Akademik', '7' => 'Ekonomi', '8' => 'Lainnya'] @endphp
+						@if ($student->status == 1)
 						<div class="ui green tiny label"><i class="ui check icon"></i>Aktif</div>
 						@else
-						<div class="ui tiny label"><i class="ui times icon"></i>Nonaktif</div>
+						<div class="ui tiny label" @if($student->description) data-tooltip="{{$student->description}}" @endif><i class="ui times icon"></i>{{$st[$student->status]}}</div>
 						@endif
 					</td>
 					<td class="middle center aligned">
@@ -93,7 +142,7 @@
 									Profile
 								</a>
 								<div class="divider"></div>
-								@if ($student->status)
+								@if ($student->status == 1)
 								<div class="item btn-deactivate" data-id="{{$student->id}}" data-name="{{$student->name}}">
 									<i class="times icon"></i>
 									Nonaktifkan
@@ -128,11 +177,34 @@
 		Nonaktifkan Santri
 	</div>
 	<div class="content">
-		<div class="ui message red">Anda yakin ingin menonaktifkan status santri atas nama <span id="name-deactivate"></span></div>
-		<form action="{{route('student.deactivate')}}" method="post" style="display: none" id="form-deactivate">
+		<div class="ui message red">Anda yakin ingin menonaktifkan status santri atas nama <span id="name-deactivate"></span>?</div>
+		<form action="{{route('student.deactivate')}}" method="post" id="form-deactivate" class="ui form">
 			@csrf
 			<input type="hidden" name="idtodeactivate" value="">
+			<div class="field">
+				<label>Alasan</label>
+				<select name="status" class="ui dropdown">
+					<option value="2">ALUMNI</option>
+					<option value="3">SKORSING</option>
+					<option value="4">CUTI</option>
+					<option value="5">SAKIT</option>
+					<option value="6">AKADEMIK</option>
+					<option value="7">EKONOMI</option>
+					<option value="8">LAINNYA</option>
+				</select>
+			</div>
+			<div class="field">
+				<label>Keterangan</label>
+				<textarea name="description" rows="3">{{old('description')}}</textarea>
+			</div>
+			<div class="field">
+				<div class="ui checkbox">
+					<input type="checkbox" name="permanent" tabindex="0" class="hidden">
+					<label>Nonaktif permanen</label>
+				</div>
+			</div>	
 		</form>
+		
 	</div>
 	<div class="actions">
 		<div class="ui black deny button">
@@ -150,7 +222,7 @@
 		Aktifkan Santri
 	</div>
 	<div class="content">
-		<div class="ui message green">Anda yakin ingin mengaktifkan status santri atas nama <span id="name-activate"></span></div>
+		<div class="ui message green">Anda yakin ingin mengaktifkan status santri atas nama <span id="name-activate"></span>? Kelas atau asrama harus didaftarkan secara manual.</div>
 		<form action="{{route('student.activate')}}" method="post" style="display: none" id="form-activate">
 			@csrf
 			<input type="hidden" name="idtoactivate" value="">
@@ -207,6 +279,10 @@
 @section('pagescript')
 <script>
 	
+	$('#selectstatus').on('change', function(){
+		$('#form-filter').submit();
+	})
+	
 	$("#uploadexcel").click(function(){
 		$("#modal-upload").modal('show');
 	});
@@ -223,7 +299,7 @@
 		$('#modal-deactivate').modal('show');
 		$('.opt.dropdown').dropdown({action: 'select'});
 	})
-
+	
 	$('.btn-activate').click(function(){
 		var id = $(this).data('id');
 		var name = $(this).data('name');

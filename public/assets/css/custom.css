@@ -63,3 +63,9 @@ body {
         column-count: 2;
     }
 }
+
+.img-slider {
+    height: 320px !important;
+    width: 100% !important;
+    object-fit: cover !important;
+}

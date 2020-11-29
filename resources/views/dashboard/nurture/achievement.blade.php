@@ -57,6 +57,12 @@
 				</div>
 			</div>
 		</div>
+		@else
+		<div class="ui message">
+			<div class="header">403 - Permission Denied</div>
+			<div class="ui divider"></div>
+			<p>Hanya bagian pengasuhan yang dapat mengelola data ini.</p>
+		</div>
 		@endcan
 		
 	</div>

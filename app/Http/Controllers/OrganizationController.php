@@ -123,7 +123,7 @@ class OrganizationController extends Controller
 				if($student->organization()->wherePivot('organization_id', $req->organization_id)->wherePivot('isactive', true)->exists()){
 					return back()->with('error', $student->name . ' sudah terdaftar sebagai sebagai anggota.');
 				}
-				$org->student()->attach($std, ['position' => $req->position, 'joindate' => $joindate]);
+				$org->student()->attach($std, ['position' => $req->position, 'description' => $req->description, 'joindate' => $joindate]);
 			}
 			return back()->with('success', 'Anggota organisasi berhasil ditambahkan.');
 		}
@@ -136,10 +136,14 @@ class OrganizationController extends Controller
 			
 			$org = Organization::find($id);
 			$joindate = $this->convertDate($req->joindate);
-			// $outdate = $this->convertDate(date('d/m/Y'));
-			// $org->student()->updateExistingPivot($req->student_id, ['position'=> $req->position, 'joindate' => $joindate]);
-			$org->student()->wherePivot('isactive', true)->updateExistingPivot($req->student_id, ['outdate'=> $joindate, 'isactive' => false]);
-			$org->student()->attach($req->student_id, ['position'=> $req->position, 'joindate' => $joindate]);
+			// $std = $org->student->where('organization_student.student_id', $req->student_id)->where('organization_student.organization_id', $id)->sortByDesc('organization_student.joindate')->first();
+			
+			// if($req->position != $std->organization_student->position) {
+				$org->student()->wherePivot('isactive', true)->updateExistingPivot($req->student_id, ['outdate'=> $joindate, 'isactive' => false]);
+				$org->student()->attach($req->student_id, ['position'=> $req->position, 'description' => $req->description, 'joindate' => $joindate]);
+			// } else {
+			// 	$org->student()->wherePivot('created_at', $std->organization_student->created_at)->updateExistingPivot($req->student_id, ['description' => $req->description, 'joindate' => $joindate]);
+			// }
 			return back()->with('success', 'Anggota organisasi berhasil diubah.');
 		}
 		
@@ -191,9 +195,9 @@ class OrganizationController extends Controller
 				'focus'				=> $request->ufocus,
 				'description'	=> $request->udescription,
 				'starting_at'	=> $starting_at
-			]
-		);
-		return back()->with('success', 'Data organisasi berhasil diubah.');
+				]
+			);
+			return back()->with('success', 'Data organisasi berhasil diubah.');
 		}
 		
 		/**

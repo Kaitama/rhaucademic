@@ -26,6 +26,7 @@ class CreateStudentsTable extends Migration
 			$table->string('birthplace');
 			$table->string('gender');
 			$table->integer('status')->default(1);
+			$table->text('description')->nullable();
 			$table->string('photo')->nullable();
 			$table->timestamps();
 		});

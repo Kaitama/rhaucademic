@@ -7,7 +7,8 @@
 	<title>{{env('APP_NAME')}} - @yield('pagetitle')</title>
 	
 	<link rel="stylesheet" href="{{asset('assets/semantic/semantic.min.css')}}" />
-	
+	<link rel="stylesheet" href="{{asset('assets/css/slick.css')}}" />
+	<link rel="stylesheet" href="{{asset('assets/css/slick-theme.css')}}" />
 	<link
 	rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css"
@@ -36,6 +37,7 @@
 	
 	<script src="{{asset('assets/js/jquery.min.js')}}"></script>
 	<script src="{{asset('assets/semantic/semantic.min.js')}}"></script>
+	<script src="{{asset('assets/js/slick.js')}}"></script>
 	<script src="{{asset('assets/js/script.js')}}"></script>
 	<script>
 		$('.message .close').on('click', function() {

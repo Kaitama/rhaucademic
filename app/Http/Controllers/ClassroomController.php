@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Building;
+use App\Student;
 use App\Classroom;
 use Illuminate\Http\Request;
 
@@ -67,9 +67,10 @@ class ClassroomController extends Controller
 	* @param  \App\Classroom  $classroom
 	* @return \Illuminate\Http\Response
 	*/
-	public function show(Classroom $classroom)
+	public function show($id)
 	{
-		//
+		$classroom = Classroom::find($id);
+		return view('dashboard.classroom.show', ['classroom' => $classroom]);
 	}
 	
 	/**
@@ -125,5 +126,21 @@ class ClassroomController extends Controller
 		Classroom::find($request->id)->delete();
 		return back()->with('success', 'Data kelas berhasil dihapus.');
 		
+	}
+
+	public function addstudents(Request $r)
+	{
+		$this->validate($r, ['students' => 'required'], ['students.required' => 'Santri tidak boleh kosong.']);
+		$students = explode(',', $r->students);
+		foreach ($students as $std) {
+			Student::find($std)->update(['classroom_id' => $r->id]);
+		}
+		return back()->with('success', 'Santri berhasil ditambahkan ke dalam kelas.');
+	}
+
+	public function removestudent(Request $r)
+	{
+		Student::find($r->idtoremove)->update(['classroom_id' => null]);
+		return back();
 	}
 }

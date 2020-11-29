@@ -16,6 +16,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\DatareportController;
 use App\Http\Controllers\ExtracurricularController;
+use App\Http\Controllers\CarrouselController;
 
 
 
@@ -36,8 +37,11 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
 	
 	// PROFILE SANTRI
 	Route::get('/student/p/{stambuk}', [StudentController::class, 'show'])->name('student.profile');
-	
-	
+	// TAMPIL KELAS
+	Route::get('/classroom/show/{id}', [ClassroomController::class, 'show'])->name('classroom.show');
+	// TAMPIL ASRAMA
+	Route::get('/dormroom/show/{id}', [DormroomController::class, 'show'])->name('dormroom.show');
+
 	// SEARCH USER
 	Route::get('search/staffs/{query}', [UserController::class, 'searchstaffs'])->name('search.staffs');
 
@@ -106,18 +110,16 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
 		Route::post('/classroom/store', [ClassroomController::class, 'store'])->name('classroom.store');
 		Route::post('/classroom/update', [ClassroomController::class, 'update'])->name('classroom.update');
 		Route::post('/classroom/destroy', [ClassroomController::class, 'destroy'])->name('classroom.destroy');
-		Route::post('/classroom/building/store', [BuildingController::class, 'store'])->name('classroom.building.store');
-		Route::post('/classroom/building/update', [BuildingController::class, 'update'])->name('classroom.building.update');
-		Route::post('/classroom/building/destroy', [BuildingController::class, 'destroy'])->name('classroom.building.destroy');
+		Route::post('/classroom/addstudents', [ClassroomController::class, 'addstudents'])->name('classroom.addstudents');
+		Route::post('/classroom/removestudent', [ClassroomController::class, 'removestudent'])->name('classroom.removestudent');
 		
 		// MENU ASRAMA
 		Route::get('/dormroom', [DormroomController::class, 'index'])->name('dormroom.index');
 		Route::post('/dormroom/store', [DormroomController::class, 'store'])->name('dormroom.store');
 		Route::post('/dormroom/update', [DormroomController::class, 'update'])->name('dormroom.update');
 		Route::post('/dormroom/destroy', [DormroomController::class, 'destroy'])->name('dormroom.destroy');
-		Route::post('/dormroom/building/store', [BuildingController::class, 'store'])->name('dormroom.building.store');
-		Route::post('/dormroom/building/update', [BuildingController::class, 'update'])->name('dormroom.building.update');
-		Route::post('/dormroom/building/destroy', [BuildingController::class, 'destroy'])->name('dormroom.building.destroy');
+		Route::post('/dormroom/addstudents', [DormroomController::class, 'addstudents'])->name('dormroom.addstudents');
+		Route::post('/dormroom/removestudent', [DormroomController::class, 'removestudent'])->name('dormroom.removestudent');
 		
 		// MENU ORGANISASI
 		Route::get('/organization', [OrganizationController::class, 'index'])->name('organization.index');
@@ -164,8 +166,14 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
 		Route::post('/student/destroy', [StudentController::class, 'destroy'])->name('student.destroy');
 		Route::get('/excel/download/template/student', [ExcelController::class, 'downloadtemplatestudent'])->name('excel.template.student');
 		Route::get('/student/search', [StudentController::class, 'search'])->name('student.search');
+		Route::get('/student/filter', [StudentController::class, 'filtering'])->name('student.filter');
 		Route::get('/student/create', [StudentController::class, 'create'])->name('student.create');
 		Route::post('/student/store', [StudentController::class, 'store'])->name('student.store');
+
+		// MENU BANNER PENGUMUMAN
+		Route::get('/carrousel', [CarrouselController::class, 'index'])->name('carrousel.index');
+		Route::post('/carrousel/store', [CarrouselController::class, 'store'])->name('carrousel.store');
+		Route::post('/carrousel/destroy', [CarrouselController::class, 'destroy'])->name('carrousel.destroy');
 	});
 	
 	// USER MENU

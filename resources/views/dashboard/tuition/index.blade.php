@@ -20,16 +20,16 @@ $months = ['1' => 'Januari', '2' => 'Februari', '3' => 'Maret', '4' => 'April', 
 					<i class="upload icon"></i> Import Excel
 				</div>
 				<div class="menu">
+					<a href="{{route('excel.template.tuition')}}" class="item">
+						<i class="file excel icon"></i>
+						Download Template
+					</a>
 					@can('c keuangan')
 					<div id="upload-excel" class="item">
 						<i class="cloud upload icon"></i>
 						Upload Excel
 					</div>
 					@endcan
-					<a href="{{route('excel.template.tuition')}}" class="item">
-						<i class="file excel icon"></i>
-						Download Template
-					</a>
 				</div>
 				
 			</div>

@@ -72,8 +72,9 @@ class Student extends Model
 	public function organization()
 	{
 		return $this->belongsToMany(Organization::class)
-		->withPivot(['position', 'joindate', 'outdate', 'isactive'])
-		->as('organization_student');;
+		->withTimestamps()
+		->withPivot(['position', 'description', 'joindate', 'outdate', 'isactive'])
+		->as('organization_student');
 	}
 
 	// relation to extracurricular

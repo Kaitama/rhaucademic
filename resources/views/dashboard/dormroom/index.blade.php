@@ -49,22 +49,26 @@
 						<div class="item">
 							<div class="right floated content">
 								<div class="ui small basic icon buttons">
-									<button class="ui button update-dormroom" data-dormroomid="{{$dormroom->id}}" data-dormroomname="{{$dormroom->name}}" data-dormroomcapacity="{{$dormroom->capacity}}" data-dormroombuilding="{{$dormroom->building}}">
+									<button class="ui button" data-tooltip="Tambah santri" data-inverted="" onclick="addStudents({{$dormroom->id}}, '{{$dormroom->name}}')">
+										<i class="plus icon"></i>
+									</button>
+									<button class="ui button" onclick="editDormroom({{$dormroom->id}}, '{{$dormroom->name}}', {{$dormroom->capacity}}, '{{$dormroom->building}}')" data-tooltip="Ubah asrama" data-inverted="">
 										<i class="edit icon"></i>
 									</button>
-									<button class="ui button delete-dormroom" data-dormroomid="{{$dormroom->id}}" data-dormroomname="{{$dormroom->name}}">
+									<button class="ui button" onclick="deleteDormroom({{$dormroom->id}}, '{{$dormroom->name}}')" data-tooltip="Hapus asrama" data-inverted="">
 										<i class="trash icon"></i>
 									</button>
 								</div>
 							</div>
 							
 							<div class="content">
-								<div class="header">{{$dormroom->name}}</div>
+								<a href="{{route('dormroom.show', $dormroom->id)}}" class="header">{{$dormroom->name}}</a>
 								<p>
 									@if($dormroom->building)
 									Gedung {{$dormroom->building}}, &nbsp;
 									@endif
-									Kapasitas {{$dormroom->capacity}} santri.</p>
+									Jumlah santri {{$dormroom->student->count()}}/{{$dormroom->capacity}}.
+								</p>
 							</div>
 						</div>
 					</div>
@@ -107,33 +111,81 @@
 	</div>
 </div>
 
+{{-- modal addStudents --}}
+<div id="modal-add-students" class="ui modal tiny">
+	<div class="header">
+		Tambah Santri Asrama <span id="namaasrama"></span>
+	</div>
+	<form class="ui form content" id="form-add-students" method="POST" action="{{route('dormroom.addstudents')}}">
+		@csrf
+		<input type="hidden" name="id" id="dormroom-id-add-students" value="">
+		{{-- form field --}}
+		<div class="field required @error('students') error @enderror">
+			<label>Nama Santri</label>
+			<div class="ui fluid search multiple selection dropdown selectstudents">
+				<input type="hidden" name="students" value="{{old('students')}}">
+				<i class="search icon"></i>
+				<div class="default text"></div>
+			</div>
+		</div>
+	</form>
+	<div class="actions">
+		<div class="ui black deny button">
+			Batal
+		</div>
+		<button onclick="document.getElementById('form-add-students').submit();" class="ui positive right labeled icon button">
+			Simpan
+			<i class="save icon"></i>
+		</button>
+	</div>
+</div>
+
+
 @include('dashboard.components.modaldelete')
 
 @endsection
 
 @section('pagescript')
 <script>
-	$(".update-dormroom").click(function(){
-		var id = $(this).data('dormroomid');
-		var name = $(this).data('dormroomname');
-		var capacity = $(this).data('dormroomcapacity');
-		var building = $(this).data('dormroombuilding');
-		
+	
+	$(document).ready(function(){
+		$('.selectstudents').dropdown({
+			minCharacters: 3,
+			apiSettings: {
+				cache: true,
+				url: '{{url("dashboard/search/students/{query}")}}',
+			},
+			fields: {
+				remoteValues : 'results', 
+				name         : 'name',  
+				value        : 'value'
+			}
+		});
+	});
+
+	function addStudents(id, name)
+	{
+		$('#namaasrama').html(name);
+		$('#dormroom-id-add-students').val(id);
+		$('#modal-add-students').modal('show');
+	}
+	
+	function editDormroom(id, name, capacity, building)
+	{
 		$('.ui.dropdown').dropdown();
 		$("#dormroom-id-update").val(id);
 		$("#dormroom-name-update").val(name);
 		$("#dormroom-capacity-update").val(capacity);
 		$("#dormroom-building-update").val(building);
 		$("#modal-edit-dormroom").modal('show');
-	});
-	$(".delete-dormroom").click(function(){
-		var id = $(this).data('dormroomid');
-		var name = $(this).data('dormroomname');
+	}
+	function deleteDormroom(id, name)
+	{
 		$("#message").html("Menghapus data Kelas " + name + " memungkinkan sebagian santri tidak memiliki kelas.");
 		$("#data-id").val(id);
 		$('#form-delete').attr("action", "{{route('dormroom.destroy')}}");
 		$("#modal-delete").modal('show');
-	});
+	}
 	
 </script>
 @endsection

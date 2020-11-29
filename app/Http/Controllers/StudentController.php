@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Auth;
 
 use App\Student;
 use App\Studentprofile;
@@ -11,6 +12,8 @@ use App\Achievement;
 use App\Permit;
 use App\Offense;
 use App\Organization;
+use App\Extracurricular;
+use App\Carrousel;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\StudentsImport;
 use Illuminate\Http\Request;
@@ -31,20 +34,47 @@ class StudentController extends Controller
 	public function deactivate(Request $request)
 	{
 		$id = $request->idtodeactivate;
-		Student::find($id)->update([
-			'status' => false
-			]
-		);
+		if($request->permanent){
+			$std = Student::find($id)->update([
+				'classroom_id'	=> null,
+				'dormroom_id' => null,
+				'status' => $request->status,
+				'description'	=> $request->description,
+				]
+			);
+			$orgs = Organization::all();
+			foreach($orgs as $org){
+				$org->student()->wherePivot('isactive', true)->updateExistingPivot($id, ['outdate'=> date('Y-m-d'), 'isactive' => false]);
+			}
+			$exts = Extracurricular::all();
+			foreach($exts as $ext){
+				$ext->student()->wherePivot('isactive', true)->updateExistingPivot($id, ['outdate'=> date('Y-m-d'), 'isactive' => false]);
+			}
+		} else {
+			Student::find($id)->update([
+				'status' => $request->status,
+				'description'	=> $request->description,
+				]
+			);
+		}
 		return back()->with('success', 'Santri berhasil dinonaktifkan.');
 	}
 	public function activate(Request $request)
 	{
 		$id = $request->idtoactivate;
 		Student::find($id)->update([
-			'status' => true
+			'status' => 1,
+			'description' => null,
 			]
 		);
 		return back()->with('success', 'Santri berhasil diaktifkan.');
+	}
+	
+	public function filtering(Request $request)
+	{
+		$status = $request->statfilter;
+		$students = Student::where('status', $status)->paginate(20);
+		return view('dashboard.student.index', ['students' => $students]);
 	}
 	
 	public function search(Request $request)
@@ -113,7 +143,7 @@ class StudentController extends Controller
 	public function index()
 	{
 		//
-		$students = Student::paginate(20);
+		$students = Student::latest()->paginate(20);
 		return view('dashboard.student.index', ['students' => $students]);
 	}
 	
@@ -208,6 +238,11 @@ class StudentController extends Controller
 	public function show($stambuk)
 	{
 		//
+		
+		if(Auth::user()->student){
+			if(Auth::user()->student->stambuk != $stambuk && Auth::user()->level == 9) return redirect()->route('dashboard.index');
+		}
+		
 		$classrooms = Classroom::all();
 		$dormrooms = Dormroom::all();
 		$student = Student::where('stambuk', $stambuk)->first();
@@ -217,7 +252,7 @@ class StudentController extends Controller
 		$offenses = Offense::where('student_id', $student->id)->simplePaginate(10, ['*'], 'offenses');
 		$organizations = $student->organization()->wherePivot('student_id', $student->id)->simplePaginate(10, ['*'], 'organizations');
 		$extracurriculars = $student->extracurricular()->wherePivot('student_id', $student->id)->simplePaginate(10, ['*'], 'extracurriculars');
-		
+		$carousels = Carrousel::limit(5)->get();
 		
 		if(!$student) return redirect()->route('student.index');
 		return view('dashboard.student.profile', [
@@ -236,6 +271,7 @@ class StudentController extends Controller
 			'offenses' => $offenses,
 			'organizations' => $organizations,
 			'extracurriculars' => $extracurriculars,
+			'carousels' => $carousels,
 			]
 		);
 	}

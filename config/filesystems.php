@@ -68,6 +68,12 @@ return [
 					// 'url' => url('assets/img/user'),
 					'visibility' => 'public',
 				],
+				'carrousel' => [
+					'driver' => 'local',
+					'root' => public_path() . '/assets/img/carrousel',
+					// 'url' => url('assets/img/user'),
+					'visibility' => 'public',
+				],
 
         's3' => [
             'driver' => 's3',

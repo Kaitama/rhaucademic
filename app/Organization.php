@@ -15,7 +15,7 @@ class Organization extends Model
 	{
 		return $this->belongsToMany(Student::class)
 		->withTimestamps()
-		->withPivot(['position', 'joindate', 'outdate', 'isactive'])
+		->withPivot(['position', 'description', 'joindate', 'outdate', 'isactive'])
 		->as('organization_student');
 		// ->using(OrganizationStudent::class);
 	}

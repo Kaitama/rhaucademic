@@ -2,67 +2,69 @@
 
 // use App\User;
 use App\Student;
+use App\Classroom;
+use App\Dormroom;
 use App\Organization;
 use App\Extracurricular;
 
 /**
- * Index
- */
+* Index
+*/
 Breadcrumbs::for('dashboard.index', function ($trail) {
 	$trail->push(env('APP_NAME'), route('dashboard.index'));
 });
 
 /**
- * Report Permit
- */
+* Report Permit
+*/
 Breadcrumbs::for('report.permit', function ($trail) {
 	$trail->parent('dashboard.index');
 	$trail->push('Laporan Perizinan', route('report.permit'));
 });
 
 /**
- * Achievement
- */
+* Achievement
+*/
 Breadcrumbs::for('achievement.index', function ($trail) {
 	$trail->parent('dashboard.index');
 	$trail->push('Prestasi', route('achievement.index'));
 });
 
 /**
- * Offense
- */
+* Offense
+*/
 Breadcrumbs::for('offense.index', function ($trail) {
 	$trail->parent('dashboard.index');
 	$trail->push('Pelanggaran', route('offense.index'));
 });
 
 /**
- * Permit
- */
+* Permit
+*/
 Breadcrumbs::for('permit.index', function ($trail) {
 	$trail->parent('dashboard.index');
 	$trail->push('Perizinan', route('permit.index'));
 });
 
 /**
- * Tuition
- */
+* Tuition
+*/
 Breadcrumbs::for('tuition.index', function ($trail) {
 	$trail->parent('dashboard.index');
 	$trail->push('Uang Sekolah', route('tuition.index'));
 });
 
 /**
- * Arrears
- */
+* Arrears
+*/
 Breadcrumbs::for('arrears.index', function ($trail) {
 	$trail->parent('dashboard.index');
 	$trail->push('Tunggakan Uang Sekolah', route('arrears.index'));
 });
 
 /**
- * Pegawai
- */
+* Pegawai
+*/
 Breadcrumbs::for('pegawai.index', function ($trail) {
 	$trail->parent('dashboard.index');
 	$trail->push('Pegawai', route('pegawai.index'));
@@ -78,22 +80,40 @@ Breadcrumbs::for('pegawai.edit', function ($trail, $id) {
 	// $trail->push($usr->name, route('pegawai.edit', $usr));
 });
 /**
- * Classroom
- */
+* Classroom
+*/
 Breadcrumbs::for('classroom.index', function ($trail) {
 	$trail->parent('dashboard.index');
 	$trail->push('Kelas', route('classroom.index'));
 });
+Breadcrumbs::for('classroom.show', function ($trail, $id) {
+	$class = Classroom::find($id);
+	if(auth()->user()->can('m basdat')){
+		$trail->parent('classroom.index');
+	} else {
+		$trail->parent('dashboard.index');
+	}
+	$trail->push($class->name, route('classroom.show', $id));
+});
 /**
- * Dormroom
- */
+* Dormroom
+*/
 Breadcrumbs::for('dormroom.index', function ($trail) {
 	$trail->parent('dashboard.index');
 	$trail->push('Asrama', route('dormroom.index'));
 });
+Breadcrumbs::for('dormroom.show', function ($trail, $id) {
+	$class = Dormroom::find($id);
+	if(auth()->user()->can('m basdat')){
+		$trail->parent('dormroom.index');
+	} else {
+		$trail->parent('dashboard.index');
+	}
+	$trail->push($class->name, route('dormroom.show', $id));
+});
 /**
- * Extracurricular
- */
+* Extracurricular
+*/
 Breadcrumbs::for('extracurricular.index', function ($trail) {
 	$trail->parent('dashboard.index');
 	$trail->push('Ekstrakurikuler', route('extracurricular.index'));
@@ -104,8 +124,8 @@ Breadcrumbs::for('extracurricular.show', function ($trail, $id) {
 	$trail->push($ext->name, route('extracurricular.show', $ext));
 });
 /**
- * Organization
- */
+* Organization
+*/
 Breadcrumbs::for('organization.index', function ($trail) {
 	$trail->parent('dashboard.index');
 	$trail->push('Organisasi', route('organization.index'));
@@ -116,8 +136,8 @@ Breadcrumbs::for('organization.show', function ($trail, $id) {
 	$trail->push($org->name, route('organization.show', $org));
 });
 /**
- * Student
- */
+* Student
+*/
 Breadcrumbs::for('student.index', function ($trail) {
 	$trail->parent('dashboard.index');
 	$trail->push('Santri', route('student.index'));
@@ -139,10 +159,23 @@ Breadcrumbs::for('student.search', function ($trail) {
 	$trail->parent('student.index');
 	$trail->push('Cari', route('student.search'));
 });
+Breadcrumbs::for('student.filter', function ($trail) {
+	$trail->parent('student.index');
+	$trail->push('Filter', route('student.filter'));
+});
 
 /**
- * User Settings
- */
+* Carrousel
+*/
+Breadcrumbs::for('carrousel.index', function ($trail) {
+	$trail->parent('dashboard.index');
+	$trail->push('Banner Informasi', route('carrousel.index'));
+});
+
+
+/**
+* User Settings
+*/
 Breadcrumbs::for('user.settings', function ($trail) {
 	$trail->parent('dashboard.index');
 	$trail->push('Settings', route('user.settings'));
@@ -150,15 +183,15 @@ Breadcrumbs::for('user.settings', function ($trail) {
 
 
 /**
- * Role
- */
+* Role
+*/
 Breadcrumbs::for('role.index', function ($trail) {
 	$trail->parent('dashboard.index');
 	$trail->push('Roles', route('role.index'));
 });
 /**
- * Permission
- */
+* Permission
+*/
 Breadcrumbs::for('permission.index', function ($trail) {
 	$trail->parent('dashboard.index');
 	$trail->push('Permissions', route('permission.index'));

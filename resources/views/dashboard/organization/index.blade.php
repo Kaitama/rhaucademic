@@ -13,7 +13,7 @@
 				<h4 class="ui header">Tambah Organisasi</h4>
 			</div>
 			<div class="ui segment">
-				<form action="{{route('organization.store')}}" method="post" id="from-create" class="ui form error">
+				<form action="{{route('organization.store')}}" method="post" id="form-create" class="ui form error">
 					@csrf
 					<div class="required field @error('name') error @enderror">
 						<label>Nama Organisasi</label>

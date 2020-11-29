@@ -69,9 +69,12 @@ Route::group(['prefix' => 'client', 'middleware' => 'auth:api'], function(){
 	Route::get('/achievement/{id}', [ApiController::class, 'getAchievement']);
 	Route::get('/offense/{id}', [ApiController::class, 'getOffense']);
 	Route::get('/permit/{id}', [ApiController::class, 'getPermit']);
+	Route::get('/organization/{id}', [ApiController::class, 'getOrganization']);
+	Route::get('/extracurricular/{id}', [ApiController::class, 'getExtracurricular']);
 	Route::post('/changeemail', [ApiController::class, 'changeEmail']);
 	Route::post('/changename', [ApiController::class, 'changeName']);
 	Route::post('/changeusername', [ApiController::class, 'changeUsername']);
 	Route::post('/changepassword', [ApiController::class, 'changePassword']);
 	Route::get('/logout', [UserController::class, 'mobileLogout']);
+	Route::get('/carrousels', [ApiController::class, 'carrousels']);
 });

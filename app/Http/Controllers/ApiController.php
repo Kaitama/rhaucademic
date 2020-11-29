@@ -12,6 +12,8 @@ use App\Achievement;
 use App\Offense;
 use App\Tuition;
 use App\Permit;
+use App\Organization;
+use App\Carrousel;
 
 class ApiController extends Controller
 {
@@ -43,7 +45,7 @@ class ApiController extends Controller
 
 	public function getTuition($id)
 	{
-		$tuitions = Tuition::where('student_id', $id)->orderBy('foryear', 'desc')->orderBy('formonth', 'desc')->get();
+		$tuitions = Tuition::where('student_id', $id)->orderBy('foryear', 'desc')->orderBy('formonth', 'desc')->limit(18)->get();
 		if($tuitions)
 			return response()->json(['success' => true, 'data' => $tuitions], 200);
 		return response()->json(['success' => false, 'message' => 'Data tidak ditemukan.'], 401);
@@ -74,6 +76,22 @@ class ApiController extends Controller
 			}
 			return response()->json(['success' => true, 'data' => $permits], 200);
 		}
+		return response()->json(['success' => false, 'message' => 'Data tidak ditemukan.'], 401);
+	}
+
+	public function getOrganization($id)
+	{
+		$student = Student::find($id);
+		$orgs = $student->organization()->wherePivot('student_id', $id)->orderBy('organization_student.joindate', 'desc')->get();
+		if($orgs) return response()->json(['success' => true, 'data' => $orgs], 200);
+		return response()->json(['success' => false, 'message' => 'Data tidak ditemukan.'], 401);
+	}
+
+	public function getExtracurricular($id)
+	{
+		$student = Student::find($id);
+		$extras = $student->extracurricular()->wherePivot('student_id', $id)->orderBy('extracurricular_student.joindate', 'desc')->get();
+		if($extras) return response()->json(['success' => true, 'data' => $extras], 200);
 		return response()->json(['success' => false, 'message' => 'Data tidak ditemukan.'], 401);
 	}
 
@@ -141,6 +159,13 @@ class ApiController extends Controller
 			return response()->json(['success' => true, 'message' => 'Sukses, silahkan login kembali.'], 200);
 		}
 		return response()->json(['success' => false, 'message' => 'Password yang anda masukkan salah!'], 401);
+	}
+
+	public function carrousels()
+	{
+		$cars = Carrousel::orderBy('created_at', 'desc')->limit(5)->get();
+		return response()->json(['success' => true, 'data' => $cars], 200);
+
 	}
 
 }

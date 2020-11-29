@@ -5,6 +5,9 @@ $s = Request::segment(2);
 	<div class="item">
 		<img src="{{asset('assets/img/app/logo.png')}}" class="ui small image centered" alt="Raudhah">
 	</div>
+	
+	@if(Auth::user()->level < 9)
+
 	<a href="{{route('dashboard.index')}}" class="item{{$s == null ? ' active' : ''}}">
 		<div>
 			<i class="icon home grey"></i>
@@ -63,12 +66,14 @@ $s = Request::segment(2);
 			Laporan Perizinan
 		</div>
 	</a>
+	@can('m keuangan')
 	<a href="{{route('arrears.index')}}" class="item{{$s == 'arrears' ? ' active' : ''}}">
 		<div>
 			<i class="icon calendar times grey"></i>
 			Laporan Tunggakan
 		</div>
 	</a>
+	@endcan
 	
 	@can('m basdat')
 	<div class="item">
@@ -112,6 +117,12 @@ $s = Request::segment(2);
 			Santri
 		</div>
 	</a>
+	<a href="{{route('carrousel.index')}}" class="item{{$s == 'carrousel' ? ' active' : ''}}">
+		<div>
+			<i class="icon images outline grey"></i>
+			Banner Informasi
+		</div>
+	</a>
 	@endcan
 	
 	@role('developer')
@@ -133,7 +144,6 @@ $s = Request::segment(2);
 		</div>
 	</a>
 	@endrole
-	
 	{{-- <div class="item">
 		<form action="#">
 			<div class="ui mini action input">
@@ -145,6 +155,7 @@ $s = Request::segment(2);
 		</form>
 	</div> --}}
 	<div class="ui horizontal divider">&bull;</div>
+	@endif
 	<div class="ui basic segment">
 		<strong>&copy;{{date('Y')}} <a href="{{env('APP_URL')}}">{{env('APP_NAME')}}</a></strong><br> 
 		<small><br>Crafted by</small><br> <span class="jariyah-text">JARIYAH</span> Digital Solution

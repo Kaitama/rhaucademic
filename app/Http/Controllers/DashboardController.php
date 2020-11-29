@@ -6,9 +6,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\User;
+use App\Classroom;
+use App\Dormroom;
 use App\Tuition;
 use App\Offense;
 use App\Permit;
+use App\Carrousel;
+use App\Student;
+use App\Organization;
+use App\Extracurricular;
 
 class DashboardController extends Controller
 {
@@ -21,6 +27,7 @@ class DashboardController extends Controller
 	{
 		//
 		$user = User::find(Auth::id());
+		if($user->level == 9) return redirect()->route('student.profile', $user->student->stambuk);
 		$passnotify = false;
 		if (Hash::check('password', $user->password)) {
 			$passnotify = true;
@@ -32,9 +39,17 @@ class DashboardController extends Controller
 		$tuitions 	= Tuition::where('paydate', date('Y-m-d'))->count();
 		$checkouts	= Permit::where('checkout', '>=', date('Y-m-d'))->where('checkout', '<=', date('Y-m-d H:i:s'))->count();
 		$checkins		= Permit::where('checkin', '>=', date('Y-m-d'))->where('checkin', '<=', date('Y-m-d H:i:s'))->count();
+		$classrooms = Classroom::orderBy('level')->orderBy('name')->get();
+		$dormrooms	= Dormroom::orderBy('building')->orderBy('name')->get();
+		$carousels	= Carrousel::limit(5)->get();
+		$users			= User::where('level', '>', 1)->where('level', '<', 9)->count();
+		$stdactive	= Student::where('status', 1)->count();
+		$alumni			= Student::where('status', 2)->count();
+		$stdinactiv	= Student::where('status', '>', 2)->count();
+		$organiz		= Organization::where('active', true)->count();
+		$extracs		= Extracurricular::where('active', true)->count();
 		
-		
-		return view('dashboard.index.index', ['passnotify' => $passnotify, 'offenses' => $offenses, 'tuitions' => $tuitions, 'checkouts' => $checkouts, 'checkins' => $checkins]);
+		return view('dashboard.index.index', ['passnotify' => $passnotify, 'offenses' => $offenses, 'tuitions' => $tuitions, 'checkouts' => $checkouts, 'checkins' => $checkins, 'classrooms' => $classrooms, 'dormrooms' => $dormrooms, 'carousels' => $carousels, 'users' => $users, 'stdactive' => $stdactive, 'alumni' => $alumni, 'stdinactiv' => $stdinactiv, 'organizations' => $organiz, 'extracurriculars' => $extracs]);
 	}
 	
 	/**

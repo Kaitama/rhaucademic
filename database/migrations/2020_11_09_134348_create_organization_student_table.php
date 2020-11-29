@@ -18,6 +18,7 @@ class CreateOrganizationStudentTable extends Migration
 			$table->foreignId('organization_id')->constrained();
 			$table->foreignId('student_id')->constrained();
 			$table->integer('position')->default(5);
+			$table->text('description')->nullable();
 			$table->date('joindate');
 			$table->date('outdate')->nullable();
 			$table->boolean('isactive')->default(true);

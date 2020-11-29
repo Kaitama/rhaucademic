@@ -36,9 +36,13 @@
 							<option value="5" selected>Anggota</option>
 						</select>
 					</div>
+					<div class="field">
+						<label>Keterangan</label>
+						<textarea name="description" rows="3">{{old('description')}}</textarea>
+					</div>
 					<div class="field required @error('joindate') error @enderror">
 						<label>Mulai Tanggal</label>
-						<input type="text" name="joindate" value="{{date('d/m/Y')}}">
+						<input type="text" name="joindate" value="{{old('joindate') ?? date('d/m/Y')}}">
 					</div>
 					<button type="submit" class="ui button labeled icon green">
 						<i class="ui plus icon"></i>
@@ -118,12 +122,21 @@
 						<tr>
 							<td>{{$no++}}</td>
 							<td><a href="{{route('student.profile', $std->stambuk)}}">{{$std->name}}</a></td>
-							<td>{{$std->classroom['name'] ?? '-'}}</td>
-							<td>{{$pos}}</td>
+							<td>
+								@if ($std->classroom)
+								<a href="{{route('classroom.show', $std->classroom['id'])}}">{{$std->classroom['name']}}</a>
+								@else
+										-
+								@endif
+							</td>
+							<td>
+								<div class="ui sub header">{{$pos}}</div>
+								{{$std->organization_student->description ?? '-'}}
+							</td>
 							<td>{{$joindate}}</td>
 							<td>
 								<div class="ui icon tiny buttons">
-									<button class="ui button edit-data" data-id="{{$std->id}}" data-name="{{$std->name}}" data-jabatan="{{$std->organization_student->position}}" data-inverted="" data-tooltip="Ubah data" data-position="left center"><i class="edit icon"></i></button>
+									<button class="ui button edit-data" data-inverted="" data-tooltip="Ubah data" data-position="left center" onclick="editStudent({{$std->id}}, '{{$std->name}}', {{$std->organization_student->position}}, '{{$std->organization_student->description}}')"><i class="edit icon"></i></button>
 								</div>
 								<div class="ui icon tiny buttons negative right floated">
 									{{-- buat modal konfirmasi --}}
@@ -194,6 +207,10 @@
 					</select>
 				</div>
 				<div class="field">
+					<label>Keterangan</label>
+					<textarea name="description" id="std-desc" rows="3"></textarea>
+				</div>
+				<div class="field">
 					<label>Mulai Tanggal</label>
 					<input type="text" name="joindate" value="{{date('d/m/Y')}}">
 				</div>
@@ -240,17 +257,13 @@
 		// $('#form-toggle').submit();
 	})
 	
-	$('.edit-data').click(function(){
-		var student_id = $(this).data('id');
-		var student_name = $(this).data('name');
-		var student_position = $(this).data('jabatan');
-		
-		$('input[name=student_id]').val(student_id);
-		$('#std-name').html(student_name);
-		$("#position-edit").val(student_position).find("option[value="+ student_position +"]").attr('selected', true); $('.ui.dropdown').dropdown();
-		
+	function editStudent(id, name, pos, desc){
+		$('input[name=student_id]').val(id);
+		$('#std-name').html(name);
+		$("#position-edit").val(pos).find("option[value="+ pos +"]").attr('selected', true); $('.ui.dropdown').dropdown();
+		$('#std-desc').html(desc);
 		
 		$('#modal-edit-data').modal('show');
-	})
+	}
 </script>
 @endsection

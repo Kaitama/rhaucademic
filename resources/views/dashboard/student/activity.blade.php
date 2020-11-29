@@ -1,4 +1,4 @@
-<div class="row">
+{{-- <div class="row"> --}}
 	<div class="ui basic segment">
 		<h4 class="ui horizontal divider header">Riwayat Aktifitas</h4>
 	</div>
@@ -12,7 +12,7 @@
 						<div class="ui inverted list">
 							<div class="item">
 								<h4 class="ui header">Uang Sekolah</h4>
-								<div class="description">Pembayaran 12 bulan terakhir</div>
+								<div class="description">Riwayat pembayaran uang sekolah</div>
 							</div>
 						</div>
 					</div>
@@ -193,6 +193,7 @@
 							@endphp
 							<div class="item">
 								<div class="ui sub header">{{$pos}} {{$org->name}}</div>
+								{{$org->organization_student->description}}
 								<div class="description">Dari: {{date('d/m/Y', strtotime($org->organization_student->joindate))}} sampai {{$org->organization_student->outdate ? date('d/m/Y', strtotime($org->organization_student->outdate)) : 'sekarang'}}</div>
 							</div>
 							
@@ -286,4 +287,4 @@
 			
 		</div>
 	</div>
-</div>
+{{-- </div> --}}
