@@ -64,6 +64,7 @@ class PegawaiController extends Controller
 		} 
 		
 		$user = User::create([
+			'level' => 5,
 			'name' => $request->name,
 			'username' => $request->username,
 			'email'	=> $request->email,
