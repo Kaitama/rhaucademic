@@ -52,8 +52,15 @@
 			<div class="ui grey segment">
 				<h4 class="ui header">List Banner Informasi</h4>
 			</div>
+			@if($carrousels->isEmpty())
 			<div class="ui segment">
-				@if($carrousels)
+				<div class="ui message">
+					<div class="header">Kosong!</div>
+					<p>Data banner informasi masih kosong.</p>
+				</div>
+			</div>
+			@else
+			<div class="ui segment">
 				<div class="ui divided items">
 					@foreach ($carrousels->sortByDesc('created_at') as $car)
 					<div class="item">
@@ -75,11 +82,12 @@
 					</div>
 					@endforeach
 				</div>
-				@endif
 				<div class="ui message">
 					<p>Hanya 5 banner informasi terbaru yang akan tampil pada aplikasi Mobile orang tua santri.</p>
 				</div>
 			</div>
+			
+			@endif
 		</div>
 		
 	</div>

@@ -22,18 +22,20 @@ class UsersTableSeeder extends Seeder
 			'username'	=> 'developer',
 			'email'	=> 'mr.ibnutama@gmail.com',
 			'password' => bcrypt('password'),
-			]);
-			
-			Userprofile::create([
-				'user_id' => $user->id,
-				]);
-				
-				$dev = Role::create(['name' => 'developer', 'guard_name' => 'web']);
-				$user->syncRoles($dev);
-				
-				// faker user
-				factory(App\User::class, 50)->create()->each(function ($usr) {
-					$usr->userprofile()->save(factory(Userprofile::class)->make());
-				});
-			}
-		}
+			]
+		);
+		
+		Userprofile::create([
+			'user_id' => $user->id,
+			]
+		);
+		
+		$dev = Role::create(['name' => 'developer', 'guard_name' => 'web']);
+		$user->syncRoles($dev);
+		
+		// faker user
+		factory(App\User::class, 2)->create()->each(function ($usr) {
+			$usr->userprofile()->save(factory(Userprofile::class)->make());
+		});
+	}
+}

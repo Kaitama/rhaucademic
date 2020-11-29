@@ -86,6 +86,11 @@
 				</tr>
 			</thead>
 			<tbody>
+				@if($students->isEmpty())
+				<tr>
+					<td colspan="7" class="center aligned">Tidak ada santri ditemukan.</td>
+				</tr>
+				@endif
 				@foreach ($students as $key => $student)
 				<tr>
 					<td>{{$key + $students->firstItem()}}</td>

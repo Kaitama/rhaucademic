@@ -58,7 +58,7 @@
 			</div>
 			@if ($actives->isEmpty())
 			<div class="ui segment">
-				<div class="ui message"><p>Data organisasi nonaktif masih kosong.</p></div>
+				<div class="ui message"><p>Data organisasi aktif masih kosong.</p></div>
 			</div>
 			@else
 			<div class="ui segment">

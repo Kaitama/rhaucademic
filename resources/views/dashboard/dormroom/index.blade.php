@@ -43,6 +43,13 @@
 			</div>
 			<div class="ui segment">
 				
+				@if($dormrooms->isEmpty())
+				<div class="ui message">
+					<div class="header">Data kosong.</div>
+					<p>Belum ada asrama yang terdaftar.</p>
+				</div>
+				@endif
+
 				@foreach ($dormrooms as $dormroom)
 				<div class="ui attached segment">
 					<div class="ui middle aligned divided list">

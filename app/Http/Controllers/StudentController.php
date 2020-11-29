@@ -143,7 +143,7 @@ class StudentController extends Controller
 	public function index()
 	{
 		//
-		$students = Student::latest()->paginate(20);
+		$students = Student::where('status', 1)->latest()->paginate(20);
 		return view('dashboard.student.index', ['students' => $students]);
 	}
 	
