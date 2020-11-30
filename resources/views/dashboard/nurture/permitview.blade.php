@@ -77,7 +77,7 @@ $td = strtotime($data->dateto);
 	</table>
 	<br>
 	<br>
-	@php $url = url('/permit/validate/' . $data->signature); @endphp
+	@php $url = url('/dashboard/permit/validate/' . $data->signature); @endphp
 	
 	<table class="signature">
 		<tr>
