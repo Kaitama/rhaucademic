@@ -115,16 +115,28 @@ $months = ['1' => 'Januari', '2' => 'Februari', '3' => 'Maret', '4' => 'April', 
 				<tr>
 					<td>{{$key + $tuitions->firstItem()}}</td>
 					<td>{{date('d/m/Y', strtotime($tuition->paydate))}}</td>
-					<td>{{$tuition->student['stambuk']}}</td>
+					<td>{{$tuition->student['stambuk'] ?? '-'}}</td>
 					@php
 					if($tuition->student['photo']){ $mphoto = $tuition->student['photo']; }
 					else { if($tuition->student['gender'] == 'P') $mphoto = 'female.jpg'; else $mphoto = 'male.jpg'; }
 					@endphp
 					<td>
+						@if($tuition->student)
 						<img src="{{asset('assets/img/student/' . $mphoto)}}" class="ui avatar image">
 						<a href="{{route('student.profile', $tuition->student['stambuk'])}}">{{$tuition->student['name']}}</a>
+						@else
+						<i>Santri telah dihapus</i>
+						@endif
 					</td>
-					<td>{{$tuition->student->classroom['name']}}</td>
+					<td>
+						@if($tuition->student['classroom_id'])
+						<a href="{{route('classroom.show', $tuition->student['classroom_id'])}}">
+						{{$tuition->student->classroom['name']}}
+					</a>
+						@else
+						{{'-'}}
+						@endif
+					</td>
 					<td>{{$tuition->formonth . '/' . $tuition->foryear}}</td>
 					<td>Rp. {{number_format($tuition->nominal, 0, ',', '.')}}</td>
 					@can('u keuangan', 'd keuangan')

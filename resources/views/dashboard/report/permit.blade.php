@@ -73,7 +73,13 @@
 								<div class="ui list">
 									<div class="item">
 										<div class="content">
-											<div class="header"><a href="{{route('student.profile', $d->student->stambuk)}}">{{$d->student->name}}</a></div>
+											<div class="header">
+												@if($d->student)
+												<a href="{{route('student.profile', $d->student->stambuk)}}">{{$d->student->name}}</a>
+												@else
+												<i>Santri sudah dihapus</i>
+												@endif
+											</div>
 											<div class="description">Kelas {{$d->student->classroom->name ?? '-'}}, Asrama {{$d->student->dormroom->name ?? '-'}}</div>
 										</div>
 									</div>

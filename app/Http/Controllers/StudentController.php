@@ -330,6 +330,18 @@ class StudentController extends Controller
 	{
 		//
 		$student = Student::find($request->id);
+		
+		$tuition = Tuition::where('student_id', $request->id)->get();
+		$permit = Permit::where('student_id', $request->id)->get();
+		$offense = Offense::where('student_id', $request->id)->get();
+		$achiev = Achievement::where('student_id', $request->id)->get();
+		$organizations = $student->organization()->wherePivot('student_id', $student->id)->get();
+		$extracurriculars = $student->extracurricular()->wherePivot('student_id', $student->id)->get();
+
+		if($tuition->isNotEmpty() || $permit->isNotEmpty() || $offense->isNotEmpty() || $achiev->isNotEmpty() || $organizations->isNotEmpty() || $extracurriculars->isNotEmpty()){
+			return back()->with('error', 'Tidak dapat menghapus santri karena telah memiliki riwayat. Silahkan EDIT atau Nonaktifkan santri!');
+		}
+		
 		if($student->photo){
 			$ori = public_path('assets/img/originals').'/'.$student->photo;
 			$thumb = public_path('assets/img/student').'/'.$student->photo;

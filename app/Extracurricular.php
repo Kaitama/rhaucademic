@@ -6,12 +6,15 @@ use App\Student;
 
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Extracurricular extends Model
 {
 	//
+	use LogsActivity;
 	protected $guarded = [];
-	
+	protected static $logUnguarded = true;
+
 	// relation to user
 	public function user()
 	{

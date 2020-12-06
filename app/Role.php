@@ -3,10 +3,14 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+// use Spatie\Activitylog\Traits\LogsActivity;
 
 class Role extends Model
 {
-		//
-		public $table = 'roles';
-		protected $guarded = [];
+	// use LogsActivity;
+	//
+	public $table = 'roles';
+	protected $guarded = [];
+
+	// protected static $logUnguarded = true;
 }

@@ -171,7 +171,7 @@
 		</table>
 		
 		<div class="ui divider"></div>
-		{{$students->links()}}
+		{{$students->appends(['_token' => app('request')->input('_token'), 'statfilter' => app('request')->input('statfilter')])->links()}}
 	</div>
 </div>
 

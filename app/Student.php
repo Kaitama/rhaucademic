@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
 use App\Studentprofile;
 use App\Classroom;
 use App\Dormroom;
@@ -18,8 +20,10 @@ use App\Extracurricular;
 class Student extends Model
 {
 	//
+	use SoftDeletes, LogsActivity;
 	protected $guarded = [];
-	
+	protected static $logUnguarded = true;
+
 	// relation to studentprofile
 	public function studentprofile()
 	{

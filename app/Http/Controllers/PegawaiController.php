@@ -131,7 +131,8 @@ class PegawaiController extends Controller
 			}
 		} 
 		
-		User::find($request->id)->update([
+		$usr = User::find($request->id);
+		$usr->update([
 			'name'		=> $request->name,
 			'username'=> $request->username,
 			'email'		=> $request->email,
@@ -144,6 +145,7 @@ class PegawaiController extends Controller
 				$user->syncRoles([]);
 			} else {
 				$user->syncRoles($request->role);
+				activity()->performedOn($usr)->withProperties(['attributes' => ['name' => $usr->name, 'role' => $request->role]])->log('edited');
 			}
 		}
 		

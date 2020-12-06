@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -16,7 +18,7 @@ use App\Extracurricular;
 
 class User extends Authenticatable
 {
-	use HasApiTokens, Notifiable, HasRoles;
+	use HasApiTokens, Notifiable, HasRoles, LogsActivity, SoftDeletes;
 	
 	/**
 	* The attributes that are mass assignable.
@@ -26,6 +28,8 @@ class User extends Authenticatable
 	protected $fillable = [
 		'level', 'name', 'username', 'email', 'password', 'photo'
 	];
+
+	protected static $logFillable = true;
 	
 	/**
 	* The attributes that should be hidden for arrays.
