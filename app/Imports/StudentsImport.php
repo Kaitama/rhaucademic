@@ -24,6 +24,7 @@ class FirstSheetImport implements ToModel, WithStartRow
 {
 	public function model(array $row)
 	{
+		// dd($row);
 		if($this->check($row[1])) {
 			$this->check($row[1]);
 		} else {
@@ -33,7 +34,8 @@ class FirstSheetImport implements ToModel, WithStartRow
 				'name' => $row[2],
 				'nokk' => $row[3],
 				'nik' => $row[4],
-				'birthdate' => $this->transformDate($row[5]),
+				// 'birthdate' => $this->transformDate($row[5]),
+				'birthdate' => $this->idDateFormat($row[5]),
 				'birthplace' => $row[6],
 				'gender' => $row[7],
 				'classroom_id' => $row[8],
@@ -98,7 +100,9 @@ class FirstSheetImport implements ToModel, WithStartRow
 				'pdescription' => $row[61],
 				]
 			);
+			
 		}
+		
 	}
 	
 	public function transformDate($value, $format = 'Y-m-d')
@@ -107,6 +111,18 @@ class FirstSheetImport implements ToModel, WithStartRow
 			return \Carbon\Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value));
 		} catch (\ErrorException $e) {
 			return \Carbon\Carbon::createFromFormat($format, $value);
+		}
+	}
+	
+	private function idDateFormat($val)
+	{
+		try {
+			$dt = explode('/', $val);
+			$d = $dt[1] . '/' . $dt[0] . '/' . $dt[2];
+			$x = strtotime($d);
+			return date('Y-m-d', $x);
+		} catch (\ErrorException $e) {
+			return $e;
 		}
 	}
 	
