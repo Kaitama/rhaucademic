@@ -10,7 +10,7 @@
 	</div>
 	<div class="ui segment">
 		<div class="ui small basic icon buttons"> 
-			<div class="ui button dropdown">
+			<div class="ui button imp dropdown">
 				<div class="text">
 					<i class="upload icon"></i> Import Excel
 				</div>
@@ -22,6 +22,8 @@
 					</div>
 				</div>
 			</div>
+			
+			<div id="exportstudents" class="ui button"><i class="download icon"></i> Export Excel</div>
 			
 			<a href="{{route('student.download.barcode')}}" class="ui button"><i class="file archive icon"></i> Download Barcode</a>
 		</div>
@@ -243,6 +245,36 @@
 		</div>
 	</div>
 </div>
+{{-- modal export students --}}
+<div class="ui tiny modal" id="modal-export">
+	<div class="header">
+		Pilih Kelas
+	</div>
+	<div class="content">
+		
+		<form id="form-export-students" action="{{route('excel.export.students')}}" method="post" class="ui form">
+			@csrf
+			<div class="field">
+				<select name="c" class="ui search dropdown">
+					<option value="">Pilih kelas</option>
+					@foreach ($classrooms as $class)
+					<option value="{{$class->id}}">{{$class->name}}</option>
+					@endforeach
+				</select>
+			</div>
+		</form>
+		
+	</div>
+	<div class="actions">
+		<div class="ui black deny button">
+			Batal
+		</div>
+		<div class="ui positive right labeled icon button" onclick="document.getElementById('form-export-students').submit()">
+			Export
+			<i class="checkmark icon"></i>
+		</div>
+	</div>
+</div>
 
 {{-- modal upload excel --}}
 <div class="ui tiny modal" id="modal-upload">
@@ -357,8 +389,14 @@
 		$("#form-search").submit();
 	});
 	
+	$('#exportstudents').click(function(){
+		$('#modal-export').modal('show');
+	});
 	
-	
+	$( document ).ready(function() {
+		// console.log( "ready!" );
+		$('.imp.dropdown').dropdown({action: 'select'});
+	});
 	
 </script>
 @endsection

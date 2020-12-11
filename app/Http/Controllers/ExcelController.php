@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\StudentsSampleExport;
+use App\Exports\StudentsExport;
 use App\Exports\TuitionsSampleExport;
 use App\Exports\TuitionsExport;
 
 use App\Tuition;
+use App\Classroom;
 
 class ExcelController extends Controller
 {
@@ -25,8 +27,13 @@ class ExcelController extends Controller
 	
 	public function exporttuition(Request $request)
 	{
-		
-		return Excel::download(new TuitionsExport($request->formonth, $request->foryear), date('d-m-Y') . '-UANG-SEKOLAH.xlsx');
-		
+		return Excel::download(new TuitionsExport($request->formonth, $request->foryear), date('d-m-Y') . '-UANG-SEKOLAH.xlsx');	
 	}
+	
+	public function exportstudents(Request $request)
+	{
+		$c = Classroom::find($request->c);
+		return Excel::download(new StudentsExport($request->c), 'SANTRI_' . $c->name . '_' . time() . '.xlsx');
+	}
+	
 }

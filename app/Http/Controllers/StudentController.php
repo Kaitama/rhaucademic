@@ -26,7 +26,9 @@ class StudentController extends Controller
 {
 	public function import(Request $request) 
 	{
-		Excel::import(new StudentsImport, $request->file('excel'));
+		
+		
+		Excel::import(new StudentsImport(), $request->file('excel'));
 		
 		return back()->with('success', 'Data santri berhasil di import.');
 	}
@@ -143,8 +145,9 @@ class StudentController extends Controller
 	public function index()
 	{
 		//
+		$classrooms = Classroom::all();
 		$students = Student::where('status', 1)->latest()->paginate(20);
-		return view('dashboard.student.index', ['students' => $students]);
+		return view('dashboard.student.index', ['students' => $students, 'classrooms' => $classrooms]);
 	}
 	
 	public function create()

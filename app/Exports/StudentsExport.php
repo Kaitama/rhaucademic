@@ -1,33 +1,47 @@
 <?php
 
 namespace App\Exports;
+use App\Student;
+use App\Studentprofile;
+use App\Classroom;
+use App\Dormroom;
 
+use Illuminate\Support\Carbon;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Events\AfterSheet;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use Maatwebsite\Excel\Concerns\WithCustomValueBinder;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use PhpOffice\PhpSpreadsheet\Cell\Cell;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\Cell\DefaultValueBinder;
 
-use App\Classroom;
-USE App\Building;
-use App\Dormroom;
-use App\Student;
-
-class StudentsSampleExport implements WithMultipleSheets
+class StudentsExport implements WithMultipleSheets
 {
 	use Exportable;
+	public function __construct(int $classroom)
+	{
+		$this->classroom = $classroom;
+	}
+	
 	public function sheets(): array
 	{
+		
 		$sheets = [];
 		
-		$sheets[] = new TemplateSantri();
+		$sheets[] = new DataSantri($this->classroom);
 		
 		for ($i = 1; $i <= 2; $i++) {
 			$sheets[] = new BuildData($i);
@@ -39,11 +53,119 @@ class StudentsSampleExport implements WithMultipleSheets
 	
 }
 
-class TemplateSantri implements WithTitle, WithCustomStartCell, WithHeadings, ShouldAutoSize, WithStyles, WithEvents
+class DataSantri extends DefaultValueBinder implements FromCollection, WithMapping, WithColumnFormatting, ShouldAutoSize, WithCustomStartCell, WithHeadings, WithStyles, WithEvents, WithTitle, WithCustomValueBinder
 {
+	
 	use RegistersEventListeners;
 	
-	public function collection(){ return collect(); }
+	protected $no = 0;
+	
+	public function __construct(int $classroom)
+	{
+		$this->classroom = $classroom;
+	}
+	
+	public function collection()
+	{
+		$s = Student::where('classroom_id', $this->classroom)->get();	
+		return $s;
+	}
+	
+	public function map($s): array
+	{
+		// $fordate = $tuitions->foryear . '-' . $tuitions->formonth . '-20';
+		// $fordate = $this->transformDateTime($fordate)->format('m/Y');
+		
+		return [
+			++$this->no,
+			$s->stambuk,
+			$s->name,
+			$s->nokk,
+			$s->nik,
+			$this->transformDateTime($s->birthdate)->format('d/m/Y'),
+			$s->birthplace,
+			$s->gender,
+			$s->classroom_id,
+			$s->dormroom_id,
+			$s->studentprofile->nickname,
+			$s->studentprofile->nisn,
+			$s->studentprofile->blood,
+			$s->studentprofile->weight,
+			$s->studentprofile->height,
+			$s->studentprofile->hobby,
+			$s->studentprofile->wishes,
+			$s->studentprofile->achievement,
+			$s->studentprofile->competition,
+			$s->studentprofile->numposition,
+			$s->studentprofile->siblings,
+			$s->studentprofile->stepsiblings,
+			$s->studentprofile->fname,
+			$s->studentprofile->fktp,
+			$s->studentprofile->flive ? 'T' : 'Y',
+			$s->studentprofile->fphone,
+			$s->studentprofile->fwa,
+			$s->studentprofile->fadd,
+			$s->studentprofile->fedu,
+			$s->studentprofile->freligion,
+			$s->studentprofile->fwork,
+			$s->studentprofile->fsalary,
+			$s->studentprofile->faddsalary,
+			$s->studentprofile->mariage ? 'T' : 'Y',
+			$s->studentprofile->mname,
+			$s->studentprofile->mktp,
+			$s->studentprofile->mlive ? 'T' : 'Y',
+			$s->studentprofile->mphone,
+			$s->studentprofile->mwa,
+			$s->studentprofile->madd,
+			$s->studentprofile->medu,
+			$s->studentprofile->mreligion,
+			$s->studentprofile->mwork,
+			$s->studentprofile->msalary,
+			$s->studentprofile->maddsalary,
+			$s->studentprofile->dname,
+			$s->studentprofile->drelation,
+			$s->studentprofile->dphone,
+			$s->studentprofile->dadd,
+			$s->studentprofile->sfrom,
+			$s->studentprofile->slevel == 'NEGERI' ? 'Y' : 'T',
+			$s->studentprofile->sname,
+			$s->studentprofile->sadd,
+			$s->studentprofile->snpsn,
+			$s->studentprofile->sun,
+			$s->studentprofile->sijazah,
+			$s->studentprofile->sskhun,
+			$s->studentprofile->transfer ? 'Y' : 'T',
+			$s->studentprofile->pfrom,
+			$s->studentprofile->padd,
+			$s->studentprofile->preason,
+			$s->studentprofile->pdescription,
+			
+			// $this->transformDateTime($tuitions->paydate)->format('d/m/Y'),
+		];
+	}
+	
+	public function bindValue(Cell $cell, $value)
+	{
+		
+		if(strlen((string)$value) > 14){ // if (is_numeric($value)) {
+			$cell->setValueExplicit($value, DataType::TYPE_STRING);
+			return true;
+		}
+		
+		// else return default behavior
+		return parent::bindValue($cell, $value);
+	}
+	
+	public function columnFormats(): array
+	{
+		return [
+			// 'D' => NumberFormat::FORMAT_TEXT,
+			'D' => '0',
+			'E' => '#',
+			'X' => '#',
+			'Z' => '#',
+		];
+	}
 	
 	public function startCell(): string { return 'A1'; }
 	
@@ -58,8 +180,6 @@ class TemplateSantri implements WithTitle, WithCustomStartCell, WithHeadings, Sh
 		'NAMA AYAH', 'NO. KTP', 'MENINGGAL (Y/T)', 'TELEPON', 'WHATSAPP', 'ALAMAT', 'PENDIDIKAN TERAKHIR', 'AGAMA', 'PEKERJAAN', 'PENGHASILAN POKOK', 'PENGHASILAN TAMBAHAN', '', 'NAMA IBU', 'NO. KTP', 'MENINGGAL (Y/T)', 'TELEPON', 'WHATSAPP', 'ALAMAT', 'PENDIDIKAN TERAKHIR', 'AGAMA', 'PEKERJAAN', 'PENGHASILAN POKOK', 'PENGHASILAN TAMBAHAN',  'NAMA DONATUR', 'HUBUNGAN DGN. SANTRI', 'TELEPON', 'ALAMAT', 'SD/SMP', 'NEGERI (Y/T)', 'NAMA SEKOLAH', 'ALAMAT', 'NPSN', 'NO. UJIAN NASIONAL', 'NO. IJAZAH', 'NO. SKHUN', 'PINDAHAN (Y/T)', 'PINDAHAN DARI', 'ALAMAT', 'ALASAN PINDAH', 'KETERANGAN']];
 	}
 	
-	public function title(): string { return 'Data Santri'; } 
-	
 	public function styles(Worksheet $sheet) { return [
 		1 => ['font' => ['bold' => true, 'size' => 16]], 
 		2 => ['font' => ['bold' => true, 'size' => 14]],
@@ -68,6 +188,8 @@ class TemplateSantri implements WithTitle, WithCustomStartCell, WithHeadings, Sh
 			'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
 		],]
 	]; }
+	
+	public function title(): string { return 'Data Santri'; } 
 	
 	public static function afterSheet(AfterSheet $event)
 	{
@@ -80,7 +202,7 @@ class TemplateSantri implements WithTitle, WithCustomStartCell, WithHeadings, Sh
 		$sheet->getComment('O2')->getText()->createTextRun('Hanya ketikkan angka dalam centimeter.');
 		$sheet->getComment('P2')->getText()->createTextRun('Pisahkan tiap hobi dengan koma.');
 		$sheet->getComment('Q2')->getText()->createTextRun('Pisahkan tiap cita-cita dengan koma.');
-
+		
 		$sheet->getComment('T2')->getText()->createTextRun('Hanya ketikkan angka.');
 		$sheet->getComment('U2')->getText()->createTextRun('Hanya ketikkan angka.');
 		$sheet->getComment('V2')->getText()->createTextRun('Hanya ketikkan angka.');
@@ -110,16 +232,25 @@ class TemplateSantri implements WithTitle, WithCustomStartCell, WithHeadings, Sh
 		$event->sheet->mergeCells('AI1:AS1');
 		$event->sheet->mergeCells('AT1:AW1');
 		$event->sheet->mergeCells('AX1:BJ1');
-
+		
 		// styling
 		$sheet->getStyle('B2:H2')->getFont()->getColor()->setRGB('ff0000');
 		$sheet->getStyle('A1:BJ2')->getBorders()->getAllBorders()
 		->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM);
 		$sheet->getRowDimension('1')->setRowHeight(36);
+		
+	}
+	
+	private function transformDateTime(string $value, string $format = 'Y-m-d')
+	{
+		try {
+			return Carbon::instance(Date::excelToDateTimeObject($value))->format($format);
+		} catch (\ErrorException $e) {
+			return Carbon::createFromFormat($format, $value);
+		}
 	}
 	
 }
-
 
 class BuildData implements FromCollection, WithTitle, WithCustomStartCell, WithHeadings, ShouldAutoSize, WithStyles
 {
@@ -136,8 +267,8 @@ class BuildData implements FromCollection, WithTitle, WithCustomStartCell, WithH
 		if($this->i == 1){
 			$classrooms = Classroom::all();
 			foreach ($classrooms as $classroom) {
-			// 	$classroom->building =  $classroom->building->name;
-			// 	unset($classroom['building_id']);
+				// 	$classroom->building =  $classroom->building->name;
+				// 	unset($classroom['building_id']);
 				unset($classroom['created_at']);
 				unset($classroom['updated_at']);
 			}

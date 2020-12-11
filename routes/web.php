@@ -160,6 +160,7 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
 		Route::post('/excel/upload/data/student', [StudentController::class, 'import'])->name('excel.data.student');
 		Route::post('/student/update/photo', [StudentController::class, 'updatephoto'])->name('student.update.photo');
 		Route::get('/student/download/barcode', [StudentController::class, 'downloadbarcode'])->name('student.download.barcode');
+		Route::post('/student/export/excel', [ExcelController::class, 'exportstudents'])->name('excel.export.students');
 		// update profile
 		Route::post('/student/update/primer', [StudentController::class, 'update'])->name('student.update');
 		Route::post('/student/update/secondary', [StudentprofileController::class, 'update'])->name('student.secondary');
