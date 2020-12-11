@@ -43,7 +43,8 @@ class FirstSheetImport implements ToModel, WithStartRow
 				'birthplace' => $row[6],
 				'gender' => $row[7],
 				'classroom_id' => $row[8],
-				'dormroom_id' => $row[9]
+				'dormroom_id' => $row[9],
+				'deleted_at'	=> null
 				]
 			);
 			Studentprofile::where('student_id', $s->id)->update([
