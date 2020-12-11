@@ -75,13 +75,13 @@
 					<div class="item">
 						<div class="content">
 							<div class="description">Nama Pembina</div>
-							<div class="header">{{$extra->user->name}}</div>
+							<div class="header">{{$extra->user->name ?? '-'}}</div>
 						</div>
 					</div>
 					<div class="item">
 						<div class="content">
 							<div class="description">Deskripsi</div>
-							<div class="header">{{$extra->description}}</div>
+							<div class="header">{{$extra->description ?? '-'}}</div>
 						</div>
 					</div>
 					<div class="item">
@@ -101,6 +101,7 @@
 				<div class="ui basic segment">
 					<div class="ui horizontal divider">Daftar Anggota</div>
 				</div>
+				@if($extra->student->where('extracurricular_student.isactive', true)->count() > 0)
 				<table class="ui celled table">
 					<thead>
 						<tr>
@@ -117,7 +118,13 @@
 						<tr>
 							<td>{{$no++}}</td>
 							<td><a href="{{route('student.profile', $std->stambuk)}}">{{$std->name}}</a></td>
-							<td>{{$std->classroom['name'] ?? '-'}}</td>
+							<td>
+								@if ($std->classroom)
+										<a href="{{route('classroom.show', $std->classroom->id)}}">{{$std->classroom['name']}}</a>
+								@else
+										{{'-'}}
+								@endif
+							</td>
 							<td>{{date('d/m/Y', strtotime($std->extracurricular_student->joindate))}}</td>
 							<td>
 									{{-- buat modal konfirmasi --}}
@@ -127,6 +134,9 @@
 						@endforeach
 					</tbody>
 				</table>
+				@else
+				<div class="ui message">Tidak ada santri terdaftar pada ekstrakurikuler ini.</div>
+				@endif
 			</div>
 		</div>
 	</div>

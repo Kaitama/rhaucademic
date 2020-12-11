@@ -26,11 +26,9 @@ class ExtracurricularController extends Controller
 	{
 		$this->validate($r, [
 			'name'		=> 'required',
-			'mentor'	=> 'required',
 			'time'		=> 'required|size:5'
 		], [
 			'name.required'		=> 'Nama ekstrakurikuler tidak boleh kosong.',
-			'mentor.required'	=> 'Mentor / Pembina ekstrakurikuler tidak boleh kosong.',
 			'time.required'		=> 'Jam pelaksanaan tidak boleh kosong.',
 			'time.size'				=> 'Format jam salah.',
 			]
@@ -105,11 +103,9 @@ class ExtracurricularController extends Controller
 	{
 		$this->validate($r, [
 			'uname'		=> 'required',
-			'umentor'	=> 'required',
 			'utime'		=> 'required|size:5'
 		], [
 			'uname.required'		=> 'Nama ekstrakurikuler tidak boleh kosong.',
-			'umentor.required'	=> 'Mentor / Pembina ekstrakurikuler tidak boleh kosong.',
 			'utime.required'		=> 'Jam pelaksanaan tidak boleh kosong.',
 			'utime.size'				=> 'Format jam salah.',
 			]

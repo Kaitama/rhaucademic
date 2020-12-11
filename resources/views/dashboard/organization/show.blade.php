@@ -95,6 +95,7 @@
 				<div class="ui basic segment">
 					<div class="ui horizontal divider">Daftar Anggota</div>
 				</div>
+				@if($org->student->where('organization_student.isactive', true)->count() > 0)
 				<table class="ui celled table">
 					<thead>
 						<tr>
@@ -147,7 +148,9 @@
 						@endforeach
 					</tbody>
 				</table>
-				
+				@else
+				<div class="ui message">Tidak ada santri terdaftar pada organisasi ini.</div>
+				@endif
 				
 			</div>
 		</div>

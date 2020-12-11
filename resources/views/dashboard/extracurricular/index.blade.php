@@ -24,7 +24,7 @@ $days = ['1' => 'Senin', '2' => 'Selasa', '3' => 'Rabu', '4' => 'Kamis', '5' => 
 						<label>Deskripsi</label>
 						<textarea name="description" rows="3">{{old('description')}}</textarea>
 					</div>
-					<div class="field required @error('mentor') error @enderror">
+					<div class="field">
 						<label>Pembina / Mentor</label>
 						<div class="ui fluid search selection dropdown mentor">
 							<input type="hidden" name="mentor" value="{{old('mentor')}}">
@@ -79,14 +79,14 @@ $days = ['1' => 'Senin', '2' => 'Selasa', '3' => 'Rabu', '4' => 'Kamis', '5' => 
 					
 					<div class="item">
 						<div class="right floated content">
-							<div class="ui mini labeled icon button editing" data-id="{{$active->id}}" data-name="{{$active->name}}" data-desc="{{$active->description}}" data-day="{{$active->day}}" data-time="{{date('H:i', strtotime($active->time))}}" data-mentor="{{$active->user->id}}" data-mentorname="{{$active->user->name}}"><i class="ui edit icon"></i>Edit</div>
+							<div class="ui mini labeled icon button editing" data-id="{{$active->id}}" data-name="{{$active->name}}" data-desc="{{$active->description}}" data-day="{{$active->day}}" data-time="{{date('H:i', strtotime($active->time))}}" data-mentor="{{$active->user->id ?? null}}" data-mentorname="{{$active->user->name ?? null}}"><i class="ui edit icon"></i>Edit</div>
 							<div class="ui mini labeled icon button negative toggling" data-id="{{$active->id}}" data-name="{{$active->name}}" data-cmd="d">
 								<i class="ui times icon"></i>Nonaktifkan
 							</div>
 						</div>
 						<div class="content">
 							<div class="header"><a href="{{route('extracurricular.show', $active->id)}}">{{$active->name}}</a></div>
-							<div class="description">Dibimbing oleh {{$active->user->name}}</div>
+							<div class="description">Dibimbing oleh {{$active->user->name ?? '-'}}</div>
 							<div class="description">Hari {{$d}} pukul {{date('H:i', strtotime($active->time))}} WIB</div>
 						</div>
 					</div>
