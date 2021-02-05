@@ -42,7 +42,7 @@
 					<th>Nama Santri</th>
 					<th>Status</th>
 					<th>Kelas</th>
-					@can('m basdat')
+					@can('u asrama')
 					<th class="collapsing">Options</th>
 					@endcan
 				</tr>
@@ -66,7 +66,7 @@
 						<a href="{{route('classroom.show', $std->classroom['id'])}}">{{$std->classroom['name']}}</a>
 						@else - @endif
 					</td>
-					@can('m basdat')
+					@can('u asrama')
 					<td>
 						<button class="ui icon small right floated negative button" onclick="removeStudent({{$std->id}}, '{{$std->name}}')" data-tooltip="Keluarkan dari asrama" data-inverted="">
 							<i class="ui minus icon"></i>
@@ -82,14 +82,11 @@
 	</div>
 </div>
 
+@can('u asrama')
 <form id="form-remove-student" action="{{route('dormroom.removestudent')}}" method="post" style="display: none">
 	@csrf
 	<input type="hidden" name="idtoremove" value="">
 </form>
-
-
-{{--  --}}
-
 {{-- edit data --}}
 <div id="modal-edit-data" class="ui mini modal">
 	<div class="header">
@@ -129,12 +126,13 @@
 		</div>
 	</div>
 </div>
+@endcan
 
 @endsection
 
 @section('pagescript')
+@can('u asrama')
 <script>
-	
 	function removeStudent(id, name)
 	{
 		$('#std-id').val(id);
@@ -151,4 +149,5 @@
 		}
 	});
 </script>
+@endcan
 @endsection

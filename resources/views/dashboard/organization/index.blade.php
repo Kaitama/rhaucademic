@@ -8,6 +8,7 @@
 	
 	<div class="five wide column">
 		
+		@can('c organisasi')
 		<div class="ui segments">
 			<div class="ui grey segment menu">
 				<h4 class="ui header">Tambah Organisasi</h4>
@@ -48,6 +49,7 @@
 				</button>
 			</div>
 		</div>
+		@endcan
 	</div>
 	
 	
@@ -66,10 +68,14 @@
 					@foreach ($actives as $act)
 					
 					<div class="item segment">
+						
+						@can('u organisasi')
 						<div class="right floated content">
 							<div class="ui icon button mini editing" data-id="{{$act->id}}" data-name="{{$act->name}}" data-focus="{{$act->focus}}" data-starting="{{date('d/m/Y', strtotime($act->starting_at))}}" data-desc="{{$act->description}}" data-position="left center" data-inverted="" data-tooltip="Ubah Organisasi"><i class="ui edit icon"></i></div>
 							<div class="ui icon button negative mini toggle-active" data-id="{{$act->id}}" data-name="{{$act->name}}" data-position="left center" data-inverted="" data-tooltip="Nonaktifkan Organisasi"><i class="icon times"></i></div>
 						</div>
+						@endcan
+						
 						<div class="content">
 							<a class="header" href="{{route('organization.show', $act->id)}}">{{$act->name}}</a>
 							<div class="description">
@@ -99,9 +105,13 @@
 					@foreach ($nonactives as $non)
 					
 					<div class="item segment">
+						
+						@can('u organisasi')
 						<div class="right floated content">
 							<div class="ui icon button positive mini toggle-inactive" data-id="{{$non->id}}" data-name="{{$non->name}}" data-position="left center" data-inverted="" data-tooltip="Aktifkan Organisasi"><i class="icon check"></i></div>
 						</div>
+						@endcan
+						
 						<div class="content">
 							<a class="header" href="{{route('organization.show', $non->id)}}">{{$non->name}}</a>
 							<div class="description">
@@ -123,7 +133,7 @@
 
 
 
-
+@can('u organisasi')
 <div id="modal-toggle-active" class="ui modal tiny">
 	<div class="header">
 		Nonaktifkan Organisasi
@@ -207,15 +217,18 @@
 		</button>
 	</div>
 </div>
+@endcan
 
-
+@canany(['d organisasi', 'global delete'])
 @include('dashboard.components.modaldelete')
+@endcanany
 
 @endsection
 
 @section('pagescript')
+
+@can('u organisasi')
 <script>
-	
 	$(".toggle-inactive").click(function(){
 		var org_id = $(this).data('id');
 		var org_name = $(this).data('name');
@@ -244,7 +257,7 @@
 		var focus = $(this).data('focus');
 		var desc = $(this).data('desc');
 		var start = $(this).data('starting');
-
+		
 		$('#form-update input[name=upid]').val(id);
 		$('#form-update input[name=uname]').val(name);
 		$('#form-update textarea[name=udescription]').html(desc);
@@ -253,6 +266,11 @@
 		
 		$("#modal-update").modal('show');
 	});
+</script>
+@endcan
+
+@canany(['d organisasi', 'global delete'])
+<script>
 	$(".delete-organization").click(function(){
 		var id = $(this).data('organizationid');
 		var name = $(this).data('organizationname');
@@ -262,4 +280,6 @@
 		$("#modal-delete").modal('show');
 	});
 </script>
+@endcanany
+
 @endsection

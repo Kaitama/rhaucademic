@@ -183,6 +183,13 @@ Breadcrumbs::for('user.settings', function ($trail) {
 
 
 /**
+* Logs
+*/
+Breadcrumbs::for('logs.index', function ($trail) {
+	$trail->parent('dashboard.index');
+	$trail->push('Log Aktivitas', route('logs.index'));
+});
+/**
 * Role
 */
 Breadcrumbs::for('role.index', function ($trail) {

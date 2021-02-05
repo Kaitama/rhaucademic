@@ -8,7 +8,9 @@
 	<div class="ui grey segment menu">
 		<h3>Data Santri</h3>
 	</div>
+	
 	<div class="ui segment">
+		@can('m basdat')
 		<div class="ui small basic icon buttons"> 
 			<div class="ui button imp dropdown">
 				<div class="text">
@@ -28,8 +30,10 @@
 			<a href="{{route('student.download.barcode')}}" class="ui button"><i class="file archive icon"></i> Download Barcode</a>
 		</div>
 		<a href="{{route('student.create')}}" class="ui labeled icon button green right floated"><i class="plus icon"></i> Tambah Santri</a>
-		{{-- LIST SANTRI --}}
 		<div class="ui divider"></div>
+		@endcan
+		
+		{{-- LIST SANTRI --}}
 		<div class="ui two column stackable grid">
 			<div class="column">
 				<form action="{{route('student.filter')}}" method="get" id="form-filter" class="ui form">
@@ -78,13 +82,16 @@
 		<table class="ui celled table">
 			<thead>
 				<tr>
-					<th>#</th>
-					<th>Stambuk</th>
+					<th class="collapsing">#</th>
+					<th class="collapsing">Stambuk</th>
 					<th>Nama Lengkap</th>
 					<th>Asrama</th>
 					<th>Kelas</th>
 					<th>Status</th>
-					<th>Options</th>
+					<th class="collapsing">App. Wali</th>
+					@can('m basdat')
+					<th class="collapsing">Options</th>
+					@endcan
 				</tr>
 			</thead>
 			<tbody>
@@ -131,7 +138,7 @@
 						<a href="{{route('classroom.show',$student->classroom['id'])}}">{{$student->classroom['name']}}</a>
 						@else - @endif
 					</td>
-					<td>
+					<td class="collapsing">
 						@php $st = ['2' => 'Alumni', '3' => 'Skorsing', '4' => 'Cuti', '5' => 'Sakit', '6' => 'Akademik', '7' => 'Ekonomi', '8' => 'Lainnya'] @endphp
 						@if ($student->status == 1)
 						<div class="ui green tiny label"><i class="ui check icon"></i>Aktif</div>
@@ -139,16 +146,23 @@
 						<div class="ui tiny label" @if($student->description) data-tooltip="{{$student->description}}" @endif><i class="ui times icon"></i>{{$st[$student->status]}}</div>
 						@endif
 					</td>
+					<td>
+						@if ($student->user)
+						<div class="ui blue labeled icon mini button" onclick="mobileOptions({{$student->user->id}}, `{{$student->name}}`)">
+							<i class="cog icon"></i>Android
+						</div>
+						@else
+						<div class="ui labeled icon mini button disabled">
+							<i class="times icon"></i>Empty
+						</div>
+						@endif
+					</td>
+					@can('m basdat')
 					<td class="middle center aligned">
 						<div class="ui opt dropdown labeled icon mini basic button">
 							<i class="ui dropdown icon"></i>
 							<span class="text">Options</span>
 							<div class="menu">
-								<a href="{{route('student.profile', $student->stambuk)}}" class="item">
-									<i class="user icon"></i>
-									Profile
-								</a>
-								<div class="divider"></div>
 								@if ($student->status == 1)
 								<div class="item btn-deactivate" data-id="{{$student->id}}" data-name="{{$student->name}}">
 									<i class="times icon"></i>
@@ -160,6 +174,7 @@
 									Aktifkan
 								</div>
 								@endif
+								<div class="divider"></div>
 								<a class="item btn-delete" data-id="{{$student->id}}" data-name="{{$student->name}}">
 									<i class="trash icon"></i>
 									Hapus
@@ -167,6 +182,7 @@
 							</div>
 						</div>
 					</td>
+					@endcan
 				</tr>
 				@endforeach
 			</tbody>
@@ -309,6 +325,32 @@
 	</div>
 </div>
 
+{{-- modal mobile options --}}
+<div class="ui tiny modal" id="modal-mobile">
+	<div class="header">
+		Pengaturan Akun Wali Santri
+	</div>
+	<div class="content">
+		<div class="description">
+			<p>Anda akan mengatur ulang akun wali santri <span id="mobile-student-name"></span>!</p>
+			<form method="POST" action="{{route('user.mobiledestroy')}}" class="ui form">
+				@csrf
+				<input type="hidden" id="mobile-user-id" name="mobileuserid">
+				<div class="field">
+					<button type="submit" class="ui negative labeled icon button">
+						<i class="trash icon"></i>Delete Account
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="actions">
+		<div class="ui black deny button">
+			Batal
+		</div>
+	</div>
+</div>
+
 @include('dashboard.components.modaldelete')
 
 @endsection
@@ -316,6 +358,12 @@
 @section('pagescript')
 <script>
 	
+	function mobileOptions(id, name) {
+		$('#mobile-user-id').val(id);
+		$('#mobile-student-name').html(name);
+		$("#modal-mobile").modal('show');
+	}
+
 	$('#selectstatus').on('change', function(){
 		$('#form-filter').submit();
 	})

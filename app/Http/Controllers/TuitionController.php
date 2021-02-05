@@ -52,6 +52,8 @@ class TuitionController extends Controller
 		return view('dashboard.tuition.index', ['tuitions' => $tuitions]);
 	}
 	
+
+	// perbaiki ini kok gak muncul tunggakannya
 	public function arrears(Request $request)
 	{
 		$month = $request->get('month');

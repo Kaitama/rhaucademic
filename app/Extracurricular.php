@@ -14,6 +14,7 @@ class Extracurricular extends Model
 	use LogsActivity;
 	protected $guarded = [];
 	protected static $logUnguarded = true;
+	protected static $logName = 'ekstrakurikuler';
 
 	// relation to user
 	public function user()

@@ -29,7 +29,9 @@ class User extends Authenticatable
 		'level', 'name', 'username', 'email', 'password', 'photo'
 	];
 
-	protected static $logFillable = true;
+	// protected static $logFillable = true;
+	protected static $logAttributes = ['name', 'username', 'email', 'photo'];
+	protected static $logName = 'pegawai';
 	
 	/**
 	* The attributes that should be hidden for arrays.

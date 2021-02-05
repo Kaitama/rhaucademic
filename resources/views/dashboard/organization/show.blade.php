@@ -7,14 +7,14 @@
 <div class="ui stackable grid">
 	
 	<div class="five wide column">
-		
+		@can('u organisasi')	
 		<div class="ui segments">
 			<div class="ui grey segment menu">
 				<h3>Tambah Anggota</h3>
 			</div>
 			<div class="ui segment">
 				@if ($org->active)
-						
+				
 				<form action="{{route('organization.addstudents')}}" method="post" id="form-add-students" class="ui form error">
 					@csrf
 					<input type="hidden" name="organization_id" value="{{$org->id}}">
@@ -50,13 +50,14 @@
 					</button>
 				</form>
 				@else
-						<div class="ui red message">
-							Tidak dapat menambah anggota baru karena organisasi sudah tidak aktif.
-						</div>
+				<div class="ui red message">
+					Tidak dapat menambah anggota baru karena organisasi sudah tidak aktif.
+				</div>
 				@endif
 			</div>
 			
 		</div>
+		@endcan
 	</div>
 	
 	<div class="eleven wide column">
@@ -104,7 +105,9 @@
 							<th>Kelas</th>
 							<th>Jabatan</th>
 							<th>Mulai</th>
+							@can('u organisasi')
 							<th>Options</th>
+							@endcan
 						</tr>
 					</thead>
 					@php $no=1 @endphp
@@ -127,14 +130,15 @@
 								@if ($std->classroom)
 								<a href="{{route('classroom.show', $std->classroom['id'])}}">{{$std->classroom['name']}}</a>
 								@else
-										-
+								-
 								@endif
 							</td>
 							<td>
 								<div class="ui sub header">{{$pos}}</div>
-								{{$std->organization_student->description ?? '-'}}
+								{{$std->organization_student->description ?? ''}}
 							</td>
 							<td>{{$joindate}}</td>
+							@can('u organisasi')
 							<td>
 								<div class="ui icon tiny buttons">
 									<button class="ui button edit-data" data-inverted="" data-tooltip="Ubah data" data-position="left center" onclick="editStudent({{$std->id}}, '{{$std->name}}', {{$std->organization_student->position}}, '{{$std->organization_student->description}}')"><i class="edit icon"></i></button>
@@ -144,6 +148,7 @@
 									<button class="ui button toggle-isactive" data-id="{{$std->id}}" data-name="{{$std->name}}" data-inverted="" data-tooltip="Nonaktifkan anggota" data-position="left center"><i class="times icon"></i></button>
 								</div>
 							</td>
+							@endcan
 						</tr>
 						@endforeach
 					</tbody>
@@ -159,7 +164,7 @@
 </div>
 
 
-
+@can('u organisasi')
 {{-- toggle isactive --}}
 <div id="modal-toggle-isactive" class="ui tiny modal">
 	<div class="header">
@@ -230,6 +235,7 @@
 		</div>
 	</div>
 </div>
+@endcan
 
 
 @endsection
@@ -250,7 +256,10 @@
 			}
 		});
 	});
-	
+	</script>
+
+@can('u organisasi')
+	<script>
 	$('.toggle-isactive').click(function(){
 		var student_id = $(this).data('id');
 		var student_name = $(this).data('name');
@@ -269,4 +278,6 @@
 		$('#modal-edit-data').modal('show');
 	}
 </script>
+@endcan
+
 @endsection

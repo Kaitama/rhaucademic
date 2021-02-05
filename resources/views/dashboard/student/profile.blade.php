@@ -124,6 +124,7 @@
 								<div class="header">{{$student->gender == 'P' ? 'PEREMPUAN' : 'LAKI-LAKI'}}</div>
 							</div>
 						</div>
+						@unlessrole('security')
 						<div class="item">
 							<div class="content">
 								<div class="description">Nomor Kartu Keluarga</div>
@@ -136,6 +137,7 @@
 								<div class="header">{{$student->nik}}</div>
 							</div>
 						</div>
+						@endunlessrole
 					</div>
 					
 					@can('m basdat')
@@ -153,10 +155,12 @@
 		{{-- tab menu --}}
 		<div class="ui top attached tabular menu">
 			<a class="item active" data-tab="biodata">Biodata</a>
+			@unlessrole('security')
 			<a class="item" data-tab="wali">Wali</a>
 			@if($student->studentprofile['donatur'])
 			<a class="item" data-tab="donatur">Donatur</a>
 			@endif
+			@endunlessrole
 			<a class="item" data-tab="school">Asal Sekolah</a>
 		</div>
 		{{-- /tab --}}
@@ -245,6 +249,7 @@
 		</div>
 		{{-- /bio data --}}
 		
+		@unlessrole('security')
 		{{-- wali --}}
 		<div id="data3" class="ui bottom attached tab segment" data-tab="wali">
 			@can('m basdat')
@@ -461,6 +466,7 @@
 		</div>
 		{{-- /donatur --}}
 		@endif
+		@endunlessrole
 		
 		{{-- school --}}
 		<div id="data5" class="ui bottom attached tab segment" data-tab="school">
@@ -620,6 +626,31 @@
 		$("#" + e).toggle();
 		$("#" + c).toggle();
 	}
+	$("#attach").click(function(){
+		$("input[name=photo]").click();
+	});
+	$('input:file', '.ui.action.input')
+	.on('change', function(e) {
+		var name = e.target.files[0].name;
+		// $('input:text', $(e.target).parent()).val(name);
+		$("#filelabel").show();
+		$('#filename', $(e.target).parent()).html('File: ' + name);
+		readURL(this);
+	});
+	$("#submit-formphoto").click(function(){
+		$("#formphoto").submit();
+	});
+	function readURL(input) {
+		if (input.files && input.files[0]) {
+			var reader = new FileReader();
+			
+			reader.onload = function(e) {
+				$('#studentphoto').attr('src', e.target.result);
+			}
+			
+			reader.readAsDataURL(input.files[0]); // convert to base64 string
+		}
+	}
 </script>
 @endcan
 <script>
@@ -643,37 +674,12 @@
 		} else {
 			$('.tfield').hide();
 		}
-		
-	})
+	});
 	
 	$('#propic .image').dimmer({
 		on: 'hover'
 	});
-	$("#attach").click(function(){
-		$("input[name=photo]").click();
-	});
-	$('input:file', '.ui.action.input')
-	.on('change', function(e) {
-		var name = e.target.files[0].name;
-		// $('input:text', $(e.target).parent()).val(name);
-		$("#filelabel").show();
-		$('#filename', $(e.target).parent()).html('File: ' + name);
-		readURL(this);
-	});
-	$("#submit-formphoto").click(function(){
-		$("#formphoto").submit();
-	});
+	
 	$('.menu .item').tab();
-	function readURL(input) {
-		if (input.files && input.files[0]) {
-			var reader = new FileReader();
-			
-			reader.onload = function(e) {
-				$('#studentphoto').attr('src', e.target.result);
-			}
-			
-			reader.readAsDataURL(input.files[0]); // convert to base64 string
-		}
-	}
 </script>
 @endsection

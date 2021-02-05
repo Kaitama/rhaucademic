@@ -7,7 +7,7 @@
 <div class="ui stackable two column grid">
 	
 	<div class="five wide column">
-		@can('c pengasuhan')
+		@can('c prestasi')
 		<div class="ui segments">
 			<div class="ui green inverted segment">
 				<h4 class="ui header">Tambah Prestasi Santri</h4>
@@ -57,15 +57,9 @@
 				</div>
 			</div>
 		</div>
-		@else
-		<div class="ui message">
-			<div class="header">403 - Permission Denied</div>
-			<div class="ui divider"></div>
-			<p>Hanya bagian pengasuhan yang dapat mengelola data ini.</p>
-		</div>
 		@endcan
-		
 	</div>
+	
 	<div class="eleven wide column">
 		<div class="ui segments">
 			<div class="ui green inverted segment">
@@ -116,39 +110,38 @@
 								<div class="description" style="font-size: 0.8em">
 									<i>Ditulis oleh {{$ach->user['name']}}</i>
 								</div>
-								@can('u pengasuhan', 'd pengasuhan')
-								<div class="ui bottom right attached label">
-									@can('u pengasuhan')
-									<a 
-									class="ui sub header btn-edit" 
-									data-id="{{$ach->id}}" 
-									data-stdname="{{$list->name}}" 
-									data-stambuk="{{$list->stambuk}}" 
-									data-photo="{{asset('assets/img/student/' . $mphoto)}}" 
-									data-name="{{$ach->name}}" 
-									data-date="{{date('d/m/Y', strtotime($ach->date))}}" 
-									data-reward="{{$ach->reward}}" 
-									data-description="{{$ach->description}}" 
-									data-rank="{{$ach->rank}}"
-									>Ubah</a> 
-									@endcan
-									| 
-									@can('d pengasuhan')
-									<a 
-									class="ui red sub header btn-delete" 
-									data-id="{{$ach->id}}" 
-									data-stdname="{{$list->name}}" 
-									data-stambuk="{{$list->stambuk}}" 
-									data-photo="{{asset('assets/img/student/' . $mphoto)}}" 
-									data-name="{{$ach->name}}" 
-									data-date="{{date('d/m/Y', strtotime($ach->date))}}" 
-									data-reward="{{$ach->reward}}" 
-									data-description="{{$ach->description}}" 
-									data-rank="{{$ach->rank}}"
-									>Hapus</a>
-									@endcan
-								</div>
+								
+								
+								@can('u prestasi')
+								<a 
+								class="ui mini button btn-edit" 
+								data-id="{{$ach->id}}" 
+								data-stdname="{{$list->name}}" 
+								data-stambuk="{{$list->stambuk}}" 
+								data-photo="{{asset('assets/img/student/' . $mphoto)}}" 
+								data-name="{{$ach->name}}" 
+								data-date="{{date('d/m/Y', strtotime($ach->date))}}" 
+								data-reward="{{$ach->reward}}" 
+								data-description="{{$ach->description}}" 
+								data-rank="{{$ach->rank}}"
+								>Ubah</a> 
 								@endcan
+								
+								@canany(['d prestasi', 'global delete'])
+								<a 
+								class="ui red mini button btn-delete" 
+								data-id="{{$ach->id}}" 
+								data-stdname="{{$list->name}}" 
+								data-stambuk="{{$list->stambuk}}" 
+								data-photo="{{asset('assets/img/student/' . $mphoto)}}" 
+								data-name="{{$ach->name}}" 
+								data-date="{{date('d/m/Y', strtotime($ach->date))}}" 
+								data-reward="{{$ach->reward}}" 
+								data-description="{{$ach->description}}" 
+								data-rank="{{$ach->rank}}"
+								>Hapus</a>
+								@endcanany
+								
 							</div>
 							@endforeach
 						</div>
@@ -165,7 +158,7 @@
 
 @if($lists)
 
-@can('u pengasuhan')
+@can('u prestasi')
 {{-- modal edit achievement --}}
 <div id="mdl-edit" class="ui tiny modal">
 	<div class="header">
@@ -219,7 +212,7 @@
 </div>
 @endcan
 
-@can('d pengasuhan')
+@canany(['d prestasi', 'global delete'])
 {{-- modal delete achievement --}}
 <div id="mdl-delete" class="ui tiny modal">
 	<div class="header">
@@ -257,7 +250,7 @@
 		</div>
 	</div>
 </div>
-@endcan
+@endcanany
 
 @endif
 
@@ -283,7 +276,10 @@
 			}
 		});
 	});
-	
+</script>
+
+@can('u prestasi')
+<script>
 	// edit achievement
 	$('.btn-edit').click(function(){
 		var stambuk = $(this).data('stambuk');
@@ -305,6 +301,11 @@
 		$('#mdl-edit textarea[name=edescription]').html(desc);
 		$('#mdl-edit').modal('show');
 	});
+</script>
+@endcan
+
+@canany(['d prestasi', 'global delete'])
+<script>
 	// delete achievement
 	$('.btn-delete').click(function(){
 		var stambuk = $(this).data('stambuk');
@@ -326,4 +327,6 @@
 		$('#mdl-delete').modal('show');
 	});
 </script>
+@endcanany
+
 @endsection

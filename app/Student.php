@@ -23,6 +23,7 @@ class Student extends Model
 	use SoftDeletes, LogsActivity;
 	protected $guarded = [];
 	protected static $logUnguarded = true;
+	protected static $logName = 'santri';
 
 	// relation to studentprofile
 	public function studentprofile()

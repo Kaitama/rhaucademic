@@ -6,6 +6,7 @@
 
 <div class="ui stackable grid">
 	<div class="ui five wide column">
+		@can('u ekskul')
 		<div class="ui segments">
 			<div class="ui grey segment">
 				<h4 class="ui header">Tambah Anggota</h4>
@@ -51,6 +52,7 @@
 			</div>
 			
 		</div>
+		@endcan
 	</div>
 	
 	@php
@@ -109,7 +111,9 @@
 							<th>Nama</th>
 							<th>Kelas</th>
 							<th>Bergabung</th>
+							@can('u ekskul')
 							<th>Options</th>
+							@endcan
 						</tr>
 					</thead>
 					@php $no=1 @endphp
@@ -120,16 +124,18 @@
 							<td><a href="{{route('student.profile', $std->stambuk)}}">{{$std->name}}</a></td>
 							<td>
 								@if ($std->classroom)
-										<a href="{{route('classroom.show', $std->classroom->id)}}">{{$std->classroom['name']}}</a>
+								<a href="{{route('classroom.show', $std->classroom->id)}}">{{$std->classroom['name']}}</a>
 								@else
-										{{'-'}}
+								{{'-'}}
 								@endif
 							</td>
 							<td>{{date('d/m/Y', strtotime($std->extracurricular_student->joindate))}}</td>
+							@can('u ekskul')
 							<td>
-									{{-- buat modal konfirmasi --}}
-									<button class="ui tiny labeled icon button negative toggle-isactive" data-studentid="{{$std->id}}" data-name="{{$std->name}}"><i class="times icon"></i>Nonaktifkan</button>
+								{{-- buat modal konfirmasi --}}
+								<button class="ui tiny labeled icon button negative toggle-isactive" data-studentid="{{$std->id}}" data-name="{{$std->name}}"><i class="times icon"></i>Nonaktifkan</button>
 							</td>
+							@endcan
 						</tr>
 						@endforeach
 					</tbody>
@@ -142,10 +148,11 @@
 	</div>
 </div>
 
+@can('u ekskul')
 {{-- toggle isactive --}}
 <div id="modal-toggle-isactive" class="ui tiny modal">
 	<div class="header">
-		Nonaktifkan Keanggotaan <span class="toggle-std-name"></span>
+		Nonaktifkan Anggota
 	</div>
 	<div class="content">
 		<div class="description">
@@ -169,6 +176,7 @@
 		</div>
 	</div>
 </div>
+@endcan
 
 @endsection
 
@@ -188,13 +196,16 @@
 			}
 		});
 	});
-
+</script>
+@can('u ekskul')
+<script>
 	$('.toggle-isactive').click(function(){
 		var stdid = $(this).data('studentid');
 		var name = $(this).data('name');
 		$('.toggle-std-name').html(name);
 		$('#toggle-student-id').val(stdid);
 		$('#modal-toggle-isactive').modal('show');
-	})
+	});
 </script>
+@endcan
 @endsection

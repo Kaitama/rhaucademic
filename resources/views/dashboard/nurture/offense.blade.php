@@ -7,7 +7,7 @@
 <div class="ui stackable two column grid">
 	
 	<div class="five wide column">
-		@can('c pengasuhan')
+		@can('c pelanggaran')
 		<div class="ui segments">
 			<div class="ui red inverted segment">
 				<h4 class="ui header">Tambahkan Pelanggaran</h4>
@@ -50,12 +50,6 @@
 					<i class="ui save icon"></i>Simpan
 				</div>
 			</div>
-		</div>
-		@else
-		<div class="ui message">
-			<div class="header">403 - Permission Denied</div>
-			<div class="ui divider"></div>
-			<p>Hanya bagian pengasuhan yang dapat mengelola data ini.</p>
 		</div>
 		@endcan
 		
@@ -102,44 +96,40 @@
 								</div>
 								
 								<div class="description">
-								 <i class="ui exclamation triangle icon"></i>	Hukuman: {{$off->punishment ?? '-'}}
+									<i class="ui exclamation triangle icon"></i>	Hukuman: {{$off->punishment ?? '-'}}
 								</div>
 								
 								<div class="description"><i class="ui sticky note icon"></i> Catatan: {{$off->notes ?? '-'}}</div>
 								<div class="description" style="font-size: 0.8em">
 									<i>Ditulis oleh {{$off->user['name']}}</i>
 								</div>
-								@can('u pengasuhan', 'd pengasuhan')
-								<div class="ui bottom right attached label">
-									@can('u pengasuhan')
-									<a 
-									class="ui sub header btn-edit" 
-									data-id="{{$off->id}}" 
-									data-stdname="{{$list->name}}" 
-									data-stambuk="{{$list->stambuk}}" 
-									data-photo="{{asset('assets/img/student/' . $mphoto)}}" 
-									data-name="{{$off->name}}" 
-									data-date="{{date('d/m/Y', strtotime($off->date))}}" 
-									data-punishment="{{$off->punishment}}" 
-									data-notes="{{$off->notes}}" 
-									>Ubah</a> 
-									@endcan
-									| 
-									@can('d pengasuhan')
-									<a 
-									class="ui red sub header btn-delete" 
-									data-id="{{$off->id}}" 
-									data-stdname="{{$list->name}}" 
-									data-stambuk="{{$list->stambuk}}" 
-									data-photo="{{asset('assets/img/student/' . $mphoto)}}" 
-									data-name="{{$off->name}}" 
-									data-date="{{date('d/m/Y', strtotime($off->date))}}" 
-									data-punishment="{{$off->punishment}}" 
-									data-notes="{{$off->notes}}" 
-									>Hapus</a>
-									@endcan
-								</div>
+								
+								@can('u pelanggaran')
+								<a 
+								class="ui mini button btn-edit" 
+								data-id="{{$off->id}}" 
+								data-stdname="{{$list->name}}" 
+								data-stambuk="{{$list->stambuk}}" 
+								data-photo="{{asset('assets/img/student/' . $mphoto)}}" 
+								data-name="{{$off->name}}" 
+								data-date="{{date('d/m/Y', strtotime($off->date))}}" 
+								data-punishment="{{$off->punishment}}" 
+								data-notes="{{$off->notes}}" 
+								>Ubah</a> 
 								@endcan
+								
+								@canany(['d pelanggaran', 'global delete'])
+								<a class="ui red mini button btn-delete" 
+								data-id="{{$off->id}}" 
+								data-stdname="{{$list->name}}" 
+								data-stambuk="{{$list->stambuk}}" 
+								data-photo="{{asset('assets/img/student/' . $mphoto)}}" 
+								data-name="{{$off->name}}" 
+								data-date="{{date('d/m/Y', strtotime($off->date))}}" 
+								data-punishment="{{$off->punishment}}" 
+								data-notes="{{$off->notes}}" 
+								>Hapus</a>
+								@endcanany
 							</div>
 							@endforeach
 						</div>
@@ -156,7 +146,7 @@
 </div>
 
 @if($lists)
-@can('u pengasuhan')
+@can('u pelanggaran')
 {{-- modal edit offense --}}
 <div id="mdl-edit" class="ui tiny modal">
 	<div class="header">
@@ -203,7 +193,7 @@
 	</div>
 </div>
 @endcan
-@can('d pengasuhan')
+@canany(['d pelanggaran', 'global delete'])
 {{-- modal delete offense --}}
 <div id="mdl-delete" class="ui tiny modal">
 	<div class="header">
@@ -238,7 +228,7 @@
 		</div>
 	</div>
 </div>
-@endcan
+@endcanany
 @endif
 
 @endsection
@@ -260,7 +250,10 @@
 			}
 		});
 	});
-	
+</script>
+
+@can('u pelanggaran')
+<script>
 	$('.btn-edit').click(function(){
 		var stambuk = $(this).data('stambuk');
 		var stdname = $(this).data('stdname');
@@ -279,7 +272,11 @@
 		$('#mdl-edit textarea[name=enotes]').html(notes);
 		$('#mdl-edit').modal('show');
 	});
-	
+</script>
+@endcan
+
+@canany(['d pelanggaran', 'global delete'])
+<script>
 	$('.btn-delete').click(function(){
 		var stambuk = $(this).data('stambuk');
 		var stdname = $(this).data('stdname');
@@ -296,9 +293,8 @@
 		$('#mdl-delete #d-notes').html('<i>' + notes + '</i>');
 		$('#mdl-delete input[name=id]').val(id);
 		$('#mdl-delete').modal('show');
-	})
-	
-	// search
-	
+	});
 </script>
+@endcanany
+
 @endsection

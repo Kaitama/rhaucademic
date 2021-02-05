@@ -11,7 +11,7 @@ class Studentprofile extends Model
 		//
 		use LogsActivity;
 		protected $guarded = [];
-		protected static $logUnguarded = true;
+		protected static $logUnguarded = false;
 
 		// relation to student
 		public function student()

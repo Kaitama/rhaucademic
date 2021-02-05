@@ -52,7 +52,7 @@
 							@csrf
 							<div class="field @error('name') error @enderror">
 								<label>Nama Lengkap</label>
-								<input type="text" name="name" value="{{old('name') ?? Auth::user()->name}}">
+								<input type="text" name="name" value="{{old('name') ?? Auth::user()->name}}" disabled>
 							</div>
 							<div class="field @error('email') error @enderror">
 								<label>Email</label>

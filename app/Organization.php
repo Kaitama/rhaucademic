@@ -13,6 +13,7 @@ class Organization extends Model
 	use LogsActivity;
 	protected $guarded = [];
 	protected static $logUnguarded = true;
+	protected static $logName = 'organisasi';
 
 	public function student()
 	{

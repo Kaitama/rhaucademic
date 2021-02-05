@@ -50,14 +50,14 @@
 					<div class="field">
 						<label>Nama Role</label>
 						<select class="ui fluid dropdown" name="role_id">
-							@foreach ($roles as $role)
+							@foreach ($roles->where('name', '!=', 'developer') as $role)
 							<option value="{{$role->id}}">{{ucwords($role->name)}}</option>
 							@endforeach
 						</select>
 					</div>
 					<div class="field">
 						<label>Permissions</label>
-						<select multiple="" class="ui dropdown" name="permission_name[]">
+						<select multiple="" class="ui search dropdown" name="permission_name[]">
 							@foreach ($permissions as $permission)
 							<option value="{{$permission->name}}">{{$permission->name}}</option>
 							@endforeach
@@ -72,6 +72,24 @@
 				</form>
 			</div>
 			
+		</div>
+
+		<div class="ui segments">
+			<div class="ui black segment menu">
+				<h3>Role With Permission</h3>
+			</div>
+			<div class="ui segment">
+				<div class="ui middle aligned divided list">
+					@foreach ($roles->where('name', '!=', 'developer') as $role)
+							<div class="item">
+								<div class="content">
+									<div class="header">{{ucwords($role->name)}}</div>
+									<div class="description">{{ucwords($role->getPermissionNames()->implode(', '))}}</div>
+								</div>
+							</div>
+					@endforeach
+				</div>
+			</div>
 		</div>
 		
 	</div>

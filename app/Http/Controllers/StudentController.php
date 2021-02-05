@@ -74,20 +74,22 @@ class StudentController extends Controller
 	
 	public function filtering(Request $request)
 	{
+		$classrooms = Classroom::all();
 		$status = $request->statfilter;
 		$students = Student::where('status', $status)->paginate(20);
-		return view('dashboard.student.index', ['students' => $students]);
+		return view('dashboard.student.index', ['students' => $students, 'classrooms' => $classrooms]);
 	}
 	
 	public function search(Request $request)
 	{
+		$classrooms = Classroom::all();
 		$string = $request->s;
 		if(is_numeric($string)){
 			$students = Student::where('stambuk','like',"%".$string."%")->with('classroom')->with('dormroom')->paginate(20);
 		} else {
 			$students = Student::where('name','like',"%".$string."%")->with('classroom')->with('dormroom')->paginate(20);
 		}
-		return view('dashboard.student.index', ['students' => $students]);
+		return view('dashboard.student.index', ['students' => $students, 'classrooms' => $classrooms]);
 	}
 	
 	public function downloadbarcode()
@@ -314,7 +316,9 @@ class StudentController extends Controller
 		);
 		$bd = explode('/', $request->birthdate);
 		$bd = $bd[2] . '-' . $bd[1] . '-' . $bd[0];
-		Student::find($request->id)->update([
+		$std = Student::find($request->id);
+		$olds = $std->stambuk;
+		$std->update([
 			'stambuk' 		=> $request->stambuk,
 			'name'				=> $request->name,
 			'nik'					=> $request->nik,
@@ -326,6 +330,10 @@ class StudentController extends Controller
 			'gender'			=> $request->gender,
 			]
 		);
+		if($olds != $request->stambuk) {
+			return redirect()->route('student.profile', $request->stambuk)->with('success', 'Data santri berhasil diubah');
+		}
+		
 		return back()->with('success', 'Data santri berhasil diubah.');
 	}
 	

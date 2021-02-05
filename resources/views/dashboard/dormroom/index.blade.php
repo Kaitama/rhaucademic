@@ -7,7 +7,7 @@
 <div class="ui stackable grid">
 	
 	<div class="six wide column">
-		
+		@can('c asrama')
 		<div class="ui segments">
 			<div class="ui grey segment menu">
 				<h3>Tambah Asrama</h3>
@@ -34,6 +34,7 @@
 				</form>
 			</div>
 		</div>
+		@endcan
 	</div>
 	
 	<div class="ten wide column">
@@ -49,22 +50,28 @@
 					<p>Belum ada asrama yang terdaftar.</p>
 				</div>
 				@endif
-
+				
 				@foreach ($dormrooms as $dormroom)
 				<div class="ui attached segment">
 					<div class="ui middle aligned divided list">
 						<div class="item">
 							<div class="right floated content">
 								<div class="ui small basic icon buttons">
+									@can('c asrama')
 									<button class="ui button" data-tooltip="Tambah santri" data-inverted="" onclick="addStudents({{$dormroom->id}}, '{{$dormroom->name}}')">
 										<i class="plus icon"></i>
 									</button>
+									@endcan
+									@can('u asrama')
 									<button class="ui button" onclick="editDormroom({{$dormroom->id}}, '{{$dormroom->name}}', {{$dormroom->capacity}}, '{{$dormroom->building}}')" data-tooltip="Ubah asrama" data-inverted="">
 										<i class="edit icon"></i>
 									</button>
+									@endcan
+									@canany(['d asrama', 'global delete'])
 									<button class="ui button" onclick="deleteDormroom({{$dormroom->id}}, '{{$dormroom->name}}')" data-tooltip="Hapus asrama" data-inverted="">
 										<i class="trash icon"></i>
 									</button>
+									@endcanany
 								</div>
 							</div>
 							
@@ -87,6 +94,7 @@
 	
 </div>
 
+@can('u asrama')
 <div id="modal-edit-dormroom" class="ui modal tiny">
 	<div class="header">
 		Ubah Data Asrama
@@ -146,9 +154,11 @@
 		</button>
 	</div>
 </div>
+@endcan
 
-
+@canany(['d asrama', 'global delete'])
 @include('dashboard.components.modaldelete')
+@endcanany
 
 @endsection
 
@@ -169,7 +179,10 @@
 			}
 		});
 	});
+</script>
 
+@can('u asrama')
+<script>
 	function addStudents(id, name)
 	{
 		$('#namaasrama').html(name);
@@ -186,6 +199,11 @@
 		$("#dormroom-building-update").val(building);
 		$("#modal-edit-dormroom").modal('show');
 	}
+</script>
+@endcan
+
+@canany(['d asrama', 'global delete'])
+<script>
 	function deleteDormroom(id, name)
 	{
 		$("#message").html("Menghapus data Kelas " + name + " memungkinkan sebagian santri tidak memiliki kelas.");
@@ -193,6 +211,6 @@
 		$('#form-delete').attr("action", "{{route('dormroom.destroy')}}");
 		$("#modal-delete").modal('show');
 	}
-	
 </script>
+@endcanany
 @endsection

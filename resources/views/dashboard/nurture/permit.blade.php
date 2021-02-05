@@ -7,7 +7,7 @@
 <div class="ui stackable two column grid">
 	
 	<div class="five wide column">
-		@can('c pengasuhan')
+		@can('c perizinan')
 		<div class="ui segments">
 			<div class="ui violet inverted segment">
 				<h4 class="ui header">Buat Surat Izin</h4>
@@ -65,12 +65,6 @@
 				</div>
 			</div>
 		</div>
-		@else
-		<div class="ui message">
-			<div class="header">403 - Permission Denied</div>
-			<div class="ui divider"></div>
-			<p>Hanya bagian pengasuhan yang dapat mengelola data ini.</p>
-		</div>
 		@endcan
 	</div>
 	
@@ -97,15 +91,22 @@
 						@endphp
 						<div class="item">
 							<div class="content right floated">
-								<a href="{{route('permit.validating', $permit->signature)}}" target="_blank" class="ui tiny icon button"><i class="ui eye icon"></i></a>
+								<a href="{{route('permit.validating', $permit->signature)}}" target="_blank" class="ui tiny icon button">
+									<i class="ui eye icon"></i>
+								</a>
+								
+								@can('c perizinan')
 								<a href="{{route('permit.show', $permit->id)}}" target="_blank" class="ui blue tiny icon button">
 									<i class="ui print icon"></i>
 								</a>
-								@can('d pengasuhan')
+								@endcan
+								
+								@canany(['d perizinan', 'global delete'])
 								<a class="ui red icon tiny button delete-permit" data-id="{{$permit->id}}" data-photo="{{asset('assets/img/student/' . $mphoto)}}" data-stbk="{{$permit->student['stambuk']}}" data-name="{{$permit->student['name']}}" data-title="{{$permit->reason}}" data-active="{{$active}}" data-from="{{$permit->user['name']}}" data-date="{{date('d/m/Y', strtotime($permit->signdate))}}">
 									<i class="ui trash icon"></i>
 								</a>
-								@endcan
+								@endcanany
+								
 							</div>
 							<img class="ui avatar image" src="{{asset('assets/img/student/' . $mphoto)}}">
 							<div class="content">
@@ -139,7 +140,7 @@
 
 
 @if ($permits)
-@can('d pengasuhan')
+@canany(['d perizinan', 'global delete'])
 {{-- modal delete permit --}}
 <div id="mdl-delete" class="ui tiny modal">
 	<div class="header">
@@ -179,7 +180,7 @@
 		</div>
 	</div>
 </div>
-@endcan
+@endcanany
 @endif
 @endsection
 
@@ -200,7 +201,10 @@
 			}
 		});
 	});
-	
+</script>
+
+@canany(['d perizinan', 'global delete'])
+<script>
 	// delete permit
 	$('.delete-permit').click(function(){
 		var id = $(this).data('id');
@@ -224,4 +228,6 @@
 		$('#mdl-delete').modal('show');
 	});
 </script>
+@endcanany
+
 @endsection

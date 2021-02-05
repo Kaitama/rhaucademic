@@ -9,6 +9,7 @@ $days = ['1' => 'Senin', '2' => 'Selasa', '3' => 'Rabu', '4' => 'Kamis', '5' => 
 <div class="ui stackable two column grid">
 	
 	<div class="five wide column">
+		@can('c ekskul')
 		<div class="ui segments">
 			<div class="ui grey segment">
 				<h4 class="ui header">Tambah Ekstrakurikuler Baru</h4>
@@ -52,6 +53,7 @@ $days = ['1' => 'Senin', '2' => 'Selasa', '3' => 'Rabu', '4' => 'Kamis', '5' => 
 				</button>
 			</div>
 		</div>
+		@endcan
 	</div>
 	<div class="eleven wide column">
 		<div class="ui segments">
@@ -78,12 +80,14 @@ $days = ['1' => 'Senin', '2' => 'Selasa', '3' => 'Rabu', '4' => 'Kamis', '5' => 
 					@if ($active->active)
 					
 					<div class="item">
+						@can('u ekskul')
 						<div class="right floated content">
 							<div class="ui mini labeled icon button editing" data-id="{{$active->id}}" data-name="{{$active->name}}" data-desc="{{$active->description}}" data-day="{{$active->day}}" data-time="{{date('H:i', strtotime($active->time))}}" data-mentor="{{$active->user->id ?? null}}" data-mentorname="{{$active->user->name ?? null}}"><i class="ui edit icon"></i>Edit</div>
 							<div class="ui mini labeled icon button negative toggling" data-id="{{$active->id}}" data-name="{{$active->name}}" data-cmd="d">
 								<i class="ui times icon"></i>Nonaktifkan
 							</div>
 						</div>
+						@endcan
 						<div class="content">
 							<div class="header"><a href="{{route('extracurricular.show', $active->id)}}">{{$active->name}}</a></div>
 							<div class="description">Dibimbing oleh {{$active->user->name ?? '-'}}</div>
@@ -125,11 +129,13 @@ $days = ['1' => 'Senin', '2' => 'Selasa', '3' => 'Rabu', '4' => 'Kamis', '5' => 
 					
 					
 					<div class="item">
+						@can('u ekskul')
 						<div class="right floated content">
 							<div class="ui mini labeled icon button positive toggling" data-id="{{$inactive->id}}" data-name="{{$inactive->name}}" data-cmd="a">
 								<i class="ui check icon"></i>Aktifkan
 							</div>
 						</div>
+						@endcan
 						<div class="content">
 							<div class="header"><a href="{{route('extracurricular.show', $inactive->id)}}">{{$inactive->name}}</a></div>
 							<div class="description">Dibimbing oleh {{$inactive->user->name}}</div>
@@ -148,45 +154,45 @@ $days = ['1' => 'Senin', '2' => 'Selasa', '3' => 'Rabu', '4' => 'Kamis', '5' => 
 	
 </div>
 
-
+@can('u ekskul')
 {{-- modal edit --}}
 <div id="modal-update" class="ui modal tiny">
 	<div class="header">Ubah Data Ekstrakurikuler</div>
 	<div class="ui basic segment">
-	<form id="form-update" class="ui form error" method="POST" action="{{route('extracurricular.update')}}">
-		@csrf
-		<input type="hidden" name="upid" value="">
-		<div class="field required @error('uname') error @enderror">
-			<label>Nama Ekstrakurikuler</label>
-			<input type="text" name="uname" value="{{old('uname')}}">
-		</div>
-		<div class="field">
-			<label>Deskripsi</label>
-			<textarea name="udescription" rows="3">{{old('udescription')}}</textarea>
-		</div>
-		<div class="field required @error('umentor') error @enderror">
-			<label>Pembina / Mentor</label>
-			<div class="ui fluid search selection dropdown mentor">
-				<input type="hidden" name="umentor" value="{{old('umentor')}}">
-				<div class="default text"></div>
-				<i class="dropdown icon"></i>
+		<form id="form-update" class="ui form error" method="POST" action="{{route('extracurricular.update')}}">
+			@csrf
+			<input type="hidden" name="upid" value="">
+			<div class="field required @error('uname') error @enderror">
+				<label>Nama Ekstrakurikuler</label>
+				<input type="text" name="uname" value="{{old('uname')}}">
 			</div>
-		</div>
-		<div class="field required">
-			<label>Hari</label>
-			<select name="uday" id="day" class="ui dropdown dayselect">
-				@foreach ($days as $key => $val)
-				<option value="{{$key}}">{{$val}}</option>
-				@endforeach
-			</select>
-		</div>
-		<div class="field required @error('utime') errror @enderror">
-			<label>Jam</label>
-			<input type="text" name="utime" value="{{old('utime') ?? '15:30'}}">
-		</div>
-		
-	</form>
-</div>
+			<div class="field">
+				<label>Deskripsi</label>
+				<textarea name="udescription" rows="3">{{old('udescription')}}</textarea>
+			</div>
+			<div class="field required @error('umentor') error @enderror">
+				<label>Pembina / Mentor</label>
+				<div class="ui fluid search selection dropdown mentor">
+					<input type="hidden" name="umentor" value="{{old('umentor')}}">
+					<div class="default text"></div>
+					<i class="dropdown icon"></i>
+				</div>
+			</div>
+			<div class="field required">
+				<label>Hari</label>
+				<select name="uday" id="day" class="ui dropdown dayselect">
+					@foreach ($days as $key => $val)
+					<option value="{{$key}}">{{$val}}</option>
+					@endforeach
+				</select>
+			</div>
+			<div class="field required @error('utime') errror @enderror">
+				<label>Jam</label>
+				<input type="text" name="utime" value="{{old('utime') ?? '15:30'}}">
+			</div>
+			
+		</form>
+	</div>
 	<div class="actions">
 		<div class="ui black deny button">
 			Batal
@@ -220,7 +226,7 @@ $days = ['1' => 'Senin', '2' => 'Selasa', '3' => 'Rabu', '4' => 'Kamis', '5' => 
 		</button>
 	</div>
 </div>
-
+@endcan
 
 @endsection
 
@@ -241,8 +247,14 @@ $days = ['1' => 'Senin', '2' => 'Selasa', '3' => 'Rabu', '4' => 'Kamis', '5' => 
 			clearable: true,
 		});
 	});
-	
-	
+	function reloadForm()
+	{ 
+		window.location.href = "{{route('extracurricular.index')}}";
+	}
+</script>
+
+@can('u ekskul')
+<script>	
 	$(".toggling").click(function(){
 		var id = $(this).data('id');
 		var name = $(this).data('name');
@@ -293,13 +305,12 @@ $days = ['1' => 'Senin', '2' => 'Selasa', '3' => 'Rabu', '4' => 'Kamis', '5' => 
 		$('#form-update .dayselect').dropdown();
 		$('#form-update input[name=utime]').val(time);
 		$('#form-update').attr('action', '{{route("extracurricular.update")}}');
-
+		
 		$('#modal-update').modal('show');
 	});
 	
-	function reloadForm()
-	{ 
-		window.location.href = "{{route('extracurricular.index')}}";
-	}
+	
 </script>
+@endcan
+
 @endsection

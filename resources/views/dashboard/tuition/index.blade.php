@@ -15,6 +15,7 @@ $months = ['1' => 'Januari', '2' => 'Februari', '3' => 'Maret', '4' => 'April', 
 	</div>
 	<div class="ui segment">
 		<div class="ui small basic icon buttons"> 
+			@can('c keuangan')
 			<div class="ui button dropdown" id="uploadexcel">
 				<div class="text">
 					<i class="upload icon"></i> Import Excel
@@ -24,22 +25,25 @@ $months = ['1' => 'Januari', '2' => 'Februari', '3' => 'Maret', '4' => 'April', 
 						<i class="file excel icon"></i>
 						Download Template
 					</a>
-					@can('c keuangan')
 					<div id="upload-excel" class="item">
 						<i class="cloud upload icon"></i>
 						Upload Excel
 					</div>
-					@endcan
 				</div>
-				
 			</div>
+			@endcan
+
+			@can('m keuangan')
 			<div id="export-excel" class="ui button"><i class="download icon"></i> Export Excel</div>
+			@endcan
 		</div>
+
 		@can('c keuangan')
 		<div id="btn-create" class="ui labeled icon button green right floated"><i class="plus icon"></i> Buat Pembayaran</div>
 		@endcan
-		{{-- LIST PEMBAYARAN --}}
+
 		<div class="ui divider"></div>
+		{{-- LIST PEMBAYARAN --}}
 		<div class="ui stackable two column grid">
 			
 			<div class="column">
@@ -52,7 +56,7 @@ $months = ['1' => 'Januari', '2' => 'Februari', '3' => 'Maret', '4' => 'April', 
 					</div>
 				</div>
 			</div>
-
+			
 			<div class="column">
 				<div class="ui basic segment">
 					{{-- form filter --}}
@@ -82,7 +86,7 @@ $months = ['1' => 'Januari', '2' => 'Februari', '3' => 'Maret', '4' => 'April', 
 					</form>
 				</div>
 			</div>
-
+			
 		</div>
 		@if ($tuitions == null)
 		<div class="ui icon message">
@@ -105,9 +109,9 @@ $months = ['1' => 'Januari', '2' => 'Februari', '3' => 'Maret', '4' => 'April', 
 					<th>Kelas</th>
 					<th>Pembayaran</th>
 					<th>Nominal</th>
-					@can('u keuangan', 'd keuangan')
+					@canany(['u keuangan', 'd keuangan'])
 					<th>Opsi</th>
-					@endcan
+					@endcanany
 				</tr>
 			</thead>
 			<tbody>
@@ -131,20 +135,20 @@ $months = ['1' => 'Januari', '2' => 'Februari', '3' => 'Maret', '4' => 'April', 
 					<td>
 						@if($tuition->student['classroom_id'])
 						<a href="{{route('classroom.show', $tuition->student['classroom_id'])}}">
-						{{$tuition->student->classroom['name']}}
-					</a>
+							{{$tuition->student->classroom['name']}}
+						</a>
 						@else
 						{{'-'}}
 						@endif
 					</td>
 					<td>{{$tuition->formonth . '/' . $tuition->foryear}}</td>
 					<td>Rp. {{number_format($tuition->nominal, 0, ',', '.')}}</td>
-					@can('u keuangan', 'd keuangan')
+					@canany(['u keuangan', 'd keuangan'])
 					<td>
 						<div class="ui icon yellow mini button btn-edit" data-id="{{$tuition->id}}" data-month="{{$tuition->formonth}}" data-foryear="{{$tuition->foryear}}" data-stambuk="{{$tuition->student['stambuk']}}" data-name="{{$tuition->student['name']}}" data-nominal="{{$tuition->nominal}}" data-paydate="{{date('d/m/Y', strtotime($tuition->paydate))}}"><i class="ui edit icon"></i></div>
 						<div class="ui icon negative mini button btn-delete" data-id="{{$tuition->id}}" data-formonth="{{$tuition->formonth}}" data-foryear="{{$tuition->foryear}}" data-name="{{$tuition->student['name']}}"><i class="ui trash icon"></i></div>
 					</td>
-					@endcan
+					@endcanany
 				</tr>
 				@endforeach
 			</tbody>
@@ -156,6 +160,7 @@ $months = ['1' => 'Januari', '2' => 'Februari', '3' => 'Maret', '4' => 'April', 
 	</div>
 </div>
 
+@can('m keuangan')
 {{-- modal export excel --}}
 <div id="mdl-export" class="ui tiny modal">
 	<div class="header">
@@ -193,6 +198,7 @@ $months = ['1' => 'Januari', '2' => 'Februari', '3' => 'Maret', '4' => 'April', 
 		</div>
 	</div>
 </div>
+@endcan
 
 @can('c keuangan')
 {{-- modal create --}}
@@ -359,7 +365,7 @@ $months = ['1' => 'Januari', '2' => 'Februari', '3' => 'Maret', '4' => 'April', 
 			},
 			
 		});
-
+		
 		$('.selectstudents').dropdown({
 			minCharacters: 3,
 			apiSettings: {
@@ -374,10 +380,13 @@ $months = ['1' => 'Januari', '2' => 'Februari', '3' => 'Maret', '4' => 'April', 
 			}
 		});
 	});
-	
 	$("#export-excel").click(function(){
 		$("#mdl-export").modal('show');
-	})
+	});
+</script>
+
+@canany(['c keuangan', 'u keuangan', 'd keuangan'])
+<script>
 	$("#btn-create").click(function(){
 		$("#mdl-create").modal('show');
 	});
@@ -430,7 +439,6 @@ $months = ['1' => 'Januari', '2' => 'Februari', '3' => 'Maret', '4' => 'April', 
 		var name = e.target.files[0].name;
 		$('input:text', $(e.target).parent()).val(name);
 	});
-	
-	
 </script>	
+@endcanany
 @endsection

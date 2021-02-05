@@ -17,6 +17,17 @@ class UserController extends Controller
 	{
 		return view('dashboard.user.settings');
 	}
+
+	public function mobiledestroy(Request $req)
+	{
+		$id = $req->mobileuserid;
+		$user = User::find($id);
+		Student::where('user_id', $id)->update(['user_id' => null]);
+		if($user->level == 9){
+			$user->forceDelete();
+		} 
+		return back()->with('success', 'Akun wali santri berhasil di reset.');
+	}
 	
 	public function updatepict(Request $request)
 	{
@@ -59,11 +70,11 @@ class UserController extends Controller
 	public function updatelogin(Request $request, User $user)
 	{
 		$this->validate($request, [
-			'name' 			=> 'required',
+			// 'name' 			=> 'required',
 			'username' 	=> 'required|alpha_num|min:3|unique:users,username,' . Auth::id(),
 			'email'			=> 'required|email|unique:users,email,' . Auth::id(),
 		], [
-			'name.required' => 'Nama tidak boleh kosong.',
+			// 'name.required' => 'Nama tidak boleh kosong.',
 			'username.required' => 'Username tidak boleh kosong.',
 			'username.alpha_num' => 'Username hanya boleh huruf & angka.',
 			'username.min' => 'Username minimal 3 karakter.',
@@ -75,7 +86,7 @@ class UserController extends Controller
 		);
 		
 		$user->find(Auth::id())->update([
-			'name'		=> $request->name,
+			// 'name'		=> $request->name,
 			'username'=> $request->username,
 			'email'		=> $request->email,
 			]

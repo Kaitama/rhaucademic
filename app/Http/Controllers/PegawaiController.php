@@ -145,7 +145,7 @@ class PegawaiController extends Controller
 				$user->syncRoles([]);
 			} else {
 				$user->syncRoles($request->role);
-				activity()->performedOn($usr)->withProperties(['attributes' => ['name' => $usr->name, 'role' => $request->role]])->log('edited');
+				// activity()->performedOn($usr)->withProperties(['attributes' => ['name' => $usr->name, 'role' => $request->role]])->log('edited');
 			}
 		}
 		

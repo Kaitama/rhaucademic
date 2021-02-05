@@ -15,7 +15,7 @@ class CreateStudentsTable extends Migration
 	{
 		Schema::create('students', function (Blueprint $table) {
 			$table->id();
-			$table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+			$table->foreignId('user_id')->nullable()->constrained()->onDelete('set null')->cascadeOnUpdate();
 			$table->foreignId('classroom_id')->nullable()->constrained()->onDelete('set null')->cascadeOnUpdate();
 			$table->foreignId('dormroom_id')->nullable()->constrained()->onDelete('set null')->cascadeOnUpdate();
 			$table->string('stambuk')->unique();

@@ -12,6 +12,7 @@ class Classroom extends Model
 	use LogsActivity;
 	protected $guarded = [];
 	protected static $logUnguarded = true;
+	protected static $logName = 'kelas';
 	// relation to students
 	public function student()
 	{
