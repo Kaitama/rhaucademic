@@ -4,13 +4,36 @@
 @section('content')
 @include('dashboard.components.flashmessage')
 
+<div class="ui basic segment">
+	<div class="ui small basic red icon buttons"> 
+		@can('c pelanggaran')
+		<div class="ui button imp dropdown">
+			<div class="text">
+				<i class="upload icon"></i> Import Excel
+			</div>
+			<div class="menu">
+				<a href="{{route('excel.template.offense')}}" class="item"><i class="file excel icon"></i> Download Template</a>
+				<div class="item" id="uploadexcel">
+					<i class="cloud upload icon"></i>
+					Upload Excel
+				</div>
+			</div>
+		</div>
+		@endcan
+		
+		@can('r pelanggaran')
+		<div id="export-excel" class="ui button"><i class="download icon"></i> Export Excel</div>
+		@endcan
+	</div>
+</div>
+
 <div class="ui stackable two column grid">
 	
 	<div class="five wide column">
 		@can('c pelanggaran')
 		<div class="ui segments">
-			<div class="ui red inverted segment">
-				<h4 class="ui header">Tambahkan Pelanggaran</h4>
+			<div class="ui red inverted clearing segment">
+				<h4 class="ui fluid header">Tambahkan Pelanggaran</h4>
 			</div>
 			<div class="ui segment">
 				<form method="post" action="{{route('offense.store')}}" id="frm-add" class="ui form error">
@@ -145,6 +168,76 @@
 	</div>
 </div>
 
+@can('c pelanggaran')
+{{-- modal upload excel --}}
+<div class="ui tiny modal" id="modal-upload">
+	<div class="header">
+		Upload File Excel Pelanggaran
+	</div>
+	<div class="content">
+		<div class="description">Pastikan file Excel yang akan di upload sudah sesuai dengan template. Klik disini untuk download template: <a href="{{route('excel.template.offense')}}" target="_blank">Download Template</a></div>
+		<div class="ui divider"></div>
+		<form action="{{route('excel.data.offense')}}" method="POST" id="form-upload-excel" class="ui form" enctype="multipart/form-data">
+			@csrf
+			<div class="field">
+				<label>File Excel</label>
+				<div class="ui action input">
+					<input type="text" placeholder="Pilih file" readonly>
+					<input type="file" name="excel">
+					<div id="attach" class="ui icon button">
+						<i class="attach icon"></i>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="actions">
+		<div class="ui black deny button">
+			Batal
+		</div>
+		<div class="ui positive right labeled icon button" id="processupload">
+			Upload
+			<i class="checkmark icon"></i>
+		</div>
+	</div>
+</div>
+@endcan
+
+@can('r pelanggaran')
+{{-- modal export excel --}}
+<div id="mdl-export" class="ui tiny modal">
+	<div class="header">
+		Export Data Pelanggaran
+	</div>
+	<div class="content">
+		<div class="description">
+			<form action="{{route('excel.export.offense')}}" method="post" class="ui form error" id="frm-export">
+				@csrf
+				<div class="two fields">
+					<div class="field required">
+						<label>Mulai Tanggal</label>
+						<input type="text" name="startdate" value="{{\Carbon\Carbon::now()->firstOfMonth()->format('d/m/Y')}}">
+					</div>
+					<div class="field required">
+						<label>Sampai Tanggal</label>
+						<input type="text" name="enddate" value="{{\Carbon\Carbon::now()->format('d/m/Y')}}">
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="actions">
+		<div class="ui black deny button">
+			Batal
+		</div>
+		<div class="ui positive right labeled icon button" onclick="document.getElementById('frm-export').submit()">
+			Export
+			<i class="download icon"></i>
+		</div>
+	</div>
+</div>
+@endcan
+
 @if($lists)
 @can('u pelanggaran')
 {{-- modal edit offense --}}
@@ -250,6 +343,9 @@
 			}
 		});
 	});
+	$("#export-excel").click(function(){
+		$("#mdl-export").modal('show');
+	});
 </script>
 
 @can('u pelanggaran')
@@ -296,5 +392,27 @@
 	});
 </script>
 @endcanany
+
+@can('c pelanggaran')
+<script>
+	$("#uploadexcel").click(function(){
+		$("#modal-upload").modal('show');
+	});
+	$("#processupload").click(function(e){
+		// e.preventDefault();
+		$("#form-upload-excel").submit();
+	});
+	$("input:text, #attach").click(function() {
+		$(this).parent().find("input:file").click();
+	});
+	
+	
+	$('input:file', '.ui.action.input')
+	.on('change', function(e) {
+		var name = e.target.files[0].name;
+		$('input:text', $(e.target).parent()).val(name);
+	});
+</script>
+@endcan
 
 @endsection

@@ -78,6 +78,12 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
 	->middleware('role_or_permission:developer|u pelanggaran');
 	Route::post('/offense/destroy', [OffenseController::class, 'destroy'])->name('offense.destroy')
 	->middleware('role_or_permission:developer|d pelanggaran|global delete');
+	Route::get('/excel/download/template/offense', [ExcelController::class, 'downloadtemplateoffense'])->name('excel.template.offense')
+	->middleware('role_or_permission:developer|c pelanggaran');
+	Route::post('/excel/upload/data/offense', [OffenseController::class, 'import'])->name('excel.data.offense')
+	->middleware('role_or_permission:developer|c pelanggaran');
+	Route::post('/excel/export/offense', [ExcelController::class, 'exportoffense'])->name('excel.export.offense')
+	->middleware('role_or_permission:developer|r pelanggaran');
 	
 	// MENU PERIZINAN
 	Route::get('/permit', [PermitController::class, 'index'])->name('permit.index')

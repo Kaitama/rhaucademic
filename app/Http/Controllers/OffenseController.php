@@ -6,6 +6,8 @@ use App\Offense;
 use App\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\OffensesImport;
 
 class OffenseController extends Controller
 {
@@ -33,6 +35,13 @@ class OffenseController extends Controller
 	public function create()
 	{
 		//
+	}
+
+	public function import(Request $request)
+	{
+		Excel::import(new OffensesImport(), $request->file('excel'));
+		
+		return back()->with('success', 'Data pelanggaran berhasil di import.');
 	}
 	
 	/**
