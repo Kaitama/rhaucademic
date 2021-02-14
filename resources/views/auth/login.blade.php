@@ -16,7 +16,7 @@
 				<div class="field">
 					<div class="ui left icon input">
 						<i class="user icon"></i>
-						<input type="text" name="username" placeholder="Username" class="@error('username') error @enderror">
+						<input type="text" name="username" placeholder="Email atau Username" class="@error('username') error @enderror">
 					</div>
 				</div>
 				<div class="field">
@@ -44,9 +44,9 @@
 		</div>
 		@endif
 		
-		{{-- <div class="ui message">
-			New to us? <a href="#">Sign Up</a>
-		</div> --}}
+		<div class="ui message">
+			Wali santri? <a href="{{route('register')}}">Register akun disini!</a>
+		</div>
 	</div>
 </div>
 @endsection

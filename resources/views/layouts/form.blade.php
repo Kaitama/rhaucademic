@@ -29,7 +29,7 @@
     .column {
       max-width: 450px;
     }
-  </style>
+	</style>
 </head>
 
 <body>

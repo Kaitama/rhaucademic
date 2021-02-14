@@ -27,7 +27,9 @@ Route::get('/', function () {
 });
 
 
-Auth::routes(['register' => false]);
+
+// Auth::routes(['register' => false]);
+Auth::routes();
 
 /**
 * DASHBOARD ROUTING
