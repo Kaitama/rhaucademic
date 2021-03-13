@@ -8,7 +8,7 @@ use App\Http\Controllers\DormroomController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\TuitionController;
-use App\Http\Controllers\StudentprofileController;
+use App\Http\Controllers\StudentProfileController;
 use App\Http\Controllers\AchievementController;
 use App\Http\Controllers\OffenseController;
 use App\Http\Controllers\PermitController;
@@ -70,6 +70,10 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
 	->middleware('role_or_permission:developer|u prestasi');
 	Route::post('/achievement/destroy', [AchievementController::class, 'destroy'])->name('achievement.destroy')
 	->middleware('role_or_permission:developer|d prestasi|global delete');
+	Route::post('/excel/upload/data/achievement', [AchievementController::class, 'import'])->name('excel.data.achievement')
+	->middleware('role_or_permission:developer|c prestasi');
+	Route::post('/excel/export/achievement', [ExcelController::class, 'exportachievement'])->name('excel.export.achievement')
+	->middleware('role_or_permission:developer|r prestasi');
 	
 	// MENU PELANGGARAN
 	Route::get('/offense', [OffenseController::class, 'index'])->name('offense.index')
@@ -113,6 +117,10 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
 	->middleware('role_or_permission:developer|c asrama|u asrama');
 	Route::post('/dormroom/removestudent', [DormroomController::class, 'removestudent'])->name('dormroom.removestudent')
 	->middleware('role_or_permission:developer|c asrama|u asrama|global delete');
+	Route::post('/excel/upload/data/dormroom', [DormroomController::class, 'import'])->name('excel.data.dormroom')
+	->middleware('role_or_permission:developer|c asrama|u asrama|global delete');
+	Route::get('/excel/export/dormroom', [DormroomController::class, 'export'])->name('excel.export.dormroom')
+	->middleware('role_or_permission:developer|r asrama');
 	
 	// MENU ORGANISASI
 	Route::get('/organization', [OrganizationController::class, 'index'])->name('organization.index')
@@ -191,6 +199,8 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
 		Route::post('/classroom/destroy', [ClassroomController::class, 'destroy'])->name('classroom.destroy');
 		Route::post('/classroom/addstudents', [ClassroomController::class, 'addstudents'])->name('classroom.addstudents');
 		Route::post('/classroom/removestudent', [ClassroomController::class, 'removestudent'])->name('classroom.removestudent');
+		Route::post('/excel/upload/data/classroom', [ClassroomController::class, 'import'])->name('excel.data.classroom');
+		Route::get('/excel/export/classroom', [ClassroomController::class, 'export'])->name('excel.export.classroom');
 		
 		// MENU SANTRI
 		Route::post('/student/deactivate', [StudentController::class, 'deactivate'])->name('student.deactivate');
@@ -201,7 +211,7 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
 		Route::post('/student/export/excel', [ExcelController::class, 'exportstudents'])->name('excel.export.students');
 		// update profile
 		Route::post('/student/update/primer', [StudentController::class, 'update'])->name('student.update');
-		Route::post('/student/update/secondary', [StudentprofileController::class, 'update'])->name('student.secondary');
+		Route::post('/student/update/secondary', [StudentProfileController::class, 'update'])->name('student.secondary');
 		Route::post('/student/destroy', [StudentController::class, 'destroy'])->name('student.destroy');
 		Route::get('/excel/download/template/student', [ExcelController::class, 'downloadtemplatestudent'])->name('excel.template.student');
 		Route::get('/student/create', [StudentController::class, 'create'])->name('student.create');

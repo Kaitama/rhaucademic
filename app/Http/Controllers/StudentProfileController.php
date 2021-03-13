@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Student;
-use App\StudentProfile;
+use App\Studentprofile;
 use Illuminate\Http\Request;
 
 class StudentProfileController extends Controller

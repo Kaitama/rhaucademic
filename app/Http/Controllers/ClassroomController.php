@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Student;
 use App\Classroom;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ClassroomImport;
+use App\Exports\ClassroomExport;
 
 class ClassroomController extends Controller
 {
@@ -30,6 +33,18 @@ class ClassroomController extends Controller
 	public function create()
 	{
 		//
+	}
+
+	public function import(Request $request)
+	{
+		Excel::import(new ClassroomImport(), $request->file('excel'));
+		
+		return back()->with('success', 'Data kelas berhasil di import.');
+	}
+
+	public function export(Request $request)
+	{
+		return Excel::download(new ClassroomExport(), 'DATA-KELAS-' . date('d-m-Y') . '.xlsx');
 	}
 	
 	/**

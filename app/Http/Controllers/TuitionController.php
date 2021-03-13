@@ -7,6 +7,7 @@ use App\Student;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\TuitionsImport;
+use Carbon\Carbon;
 
 
 class TuitionController extends Controller
@@ -40,33 +41,48 @@ class TuitionController extends Controller
 		$tuitions = null;
 		//
 		if($month && $year) {
-			$tuitions = Tuition::where('formonth', $month)->where('foryear', $year)->paginate(50);
+			$tuitions = Tuition::where('formonth', $month)->where('foryear', $year)->paginate(50)->withQueryString();
 		}elseif ($month) {
-			$tuitions = Tuition::where('formonth', $month)->latest()->paginate(50);
+			$tuitions = Tuition::where('formonth', $month)->latest()->paginate(50)->withQueryString();
 		} elseif($year) {
-			$tuitions = Tuition::where('foryear', $year)->latest()->paginate(50);
+			$tuitions = Tuition::where('foryear', $year)->latest()->paginate(50)->withQueryString();
 		} else {
 			$tuitions = null;
 		}
-		// dd($tuitions);
+		
 		return view('dashboard.tuition.index', ['tuitions' => $tuitions]);
 	}
 	
 
-	// perbaiki ini kok gak muncul tunggakannya
 	public function arrears(Request $request)
 	{
 		$month = $request->get('month');
 		$year = $request->get('year');
+		$limitDate = 28;
 		$arrears = null;
-		if($month == date('m') && $year == date('Y') && date('d') >= 28 || $month < date('m') && $year <= date('Y') && $year != null){
-			$arrears = Student::doesnthave('tuition','or' ,function($query) use($month, $year) {
-				$query->where('formonth', $month)->where('foryear', $year);
-			})->get();
-			$arrears->month = $month;
-			$arrears->year = $year;
-		} 
+		if($month || $year) {
+			if($month == date('m') && $year == date('Y')) {
+				if(date('d') >= $limitDate) $arrears = $this->getArr($month, $year);
+			} 
+			if($month < date('m') && $year == date('Y')){
+				$arrears = $this->getArr($month, $year);
+			} 
+			if($year < date('Y')){
+				$arrears = $this->getArr($month, $year);
+			}
+		}
+
 		return view('dashboard.tuition.arrears', ['arrears' => $arrears]);
+	}
+
+	private function getArr($m, $y)
+	{
+		$arr = Student::doesnthave('tuition','or' ,function($query) use($m, $y) {
+			$query->where('formonth', $m)->where('foryear', $y);
+		})->paginate(50)->withQueryString();
+		$arr->month = $m;
+		$arr->year = $y;
+		return $arr;
 	}
 	
 	/**

@@ -9,6 +9,7 @@ use App\Exports\StudentsExport;
 use App\Exports\TuitionsSampleExport;
 use App\Exports\TuitionsExport;
 use App\Exports\OffensesExport;
+use App\Exports\AchievementsExport;
 use App\Exports\OffensesSampleExport;
 
 use App\Tuition;
@@ -40,6 +41,11 @@ class ExcelController extends Controller
 	public function exportoffense(Request $request)
 	{
 		return Excel::download(new OffensesExport($request->startdate, $request->enddate), 'DATA-PELANGGARAN-' . date('d-m-Y') . '.xlsx');
+	}
+	
+	public function exportachievement(Request $request)
+	{
+		return Excel::download(new AchievementsExport($request->startdate, $request->enddate), 'DATA-PRESTASI-' . date('d-m-Y') . '.xlsx');
 	}
 	
 	public function exportstudents(Request $request)

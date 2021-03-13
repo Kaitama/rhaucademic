@@ -6,6 +6,9 @@ use App\Student;
 use App\Dormroom;
 use App\Building;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\DormroomImport;
+use App\Exports\DormroomExport;
 
 class DormroomController extends Controller
 {
@@ -29,6 +32,18 @@ class DormroomController extends Controller
 	public function create()
 	{
 		//
+	}
+
+	public function import(Request $request)
+	{
+		Excel::import(new DormroomImport(), $request->file('excel'));
+		
+		return back()->with('success', 'Data asrama berhasil di import.');
+	}
+
+	public function export(Request $request)
+	{
+		return Excel::download(new DormroomExport(), 'DATA-ASRAMA-' . date('d-m-Y') . '.xlsx');
 	}
 	
 	/**

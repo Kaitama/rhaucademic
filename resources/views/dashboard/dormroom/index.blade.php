@@ -33,6 +33,22 @@
 					</button>
 				</form>
 			</div>
+			<div class="ui segment">
+				<div class="ui fluid basic buttons">
+					<div class="ui button dropdown">
+						<i class="upload icon"></i>
+						Import Excel
+						<div class="menu">
+							<a href="{{asset('excels/TEMPLATE_ASRAMA.xlsx')}}" class="item">Download template</a>
+							<div id="uploadexcel" class="item">Upload Excel</div>
+						</div>
+					</div>
+					<a href="{{route('excel.export.dormroom')}}" class="ui button">
+						<i class="download icon"></i>
+						Export Excel
+					</a>
+				</div>
+			</div>
 		</div>
 		@endcan
 	</div>
@@ -154,6 +170,41 @@
 		</button>
 	</div>
 </div>
+
+
+{{-- modal upload excel --}}
+<div class="ui tiny modal" id="modal-upload">
+	<div class="header">
+		Upload File Excel Asrama
+	</div>
+	<div class="content">
+		<div class="description">Pastikan file Excel yang akan di upload sudah sesuai dengan template. Klik disini untuk download template: <a href="{{asset('excels/TEMPLATE_ASRAMA.xlsx')}}">Download Template</a></div>
+		<div class="ui divider"></div>
+		<form action="{{route('excel.data.dormroom')}}" method="POST" id="form-upload-excel" class="ui form" enctype="multipart/form-data">
+			@csrf
+			<div class="field">
+				<label>File Excel</label>
+				<div class="ui action input">
+					<input type="text" placeholder="Pilih file" readonly>
+					<input type="file" name="excel">
+					<div id="attach" class="ui icon button">
+						<i class="attach icon"></i>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="actions">
+		<div class="ui black deny button">
+			Batal
+		</div>
+		<div class="ui positive right labeled icon button" id="processupload">
+			Upload
+			<i class="checkmark icon"></i>
+		</div>
+	</div>
+</div>
+
 @endcan
 
 @canany(['d asrama', 'global delete'])
@@ -199,6 +250,26 @@
 		$("#dormroom-building-update").val(building);
 		$("#modal-edit-dormroom").modal('show');
 	}
+</script>
+@endcan
+
+@can('c asrama')
+<script>
+	$("#uploadexcel").click(function(){
+		$("#modal-upload").modal('show');
+	});
+	$("#processupload").click(function(e){
+		// e.preventDefault();
+		$("#form-upload-excel").submit();
+	});
+	$("input:text, #attach").click(function() {
+		$(this).parent().find("input:file").click();
+	});
+	$('input:file', '.ui.action.input')
+	.on('change', function(e) {
+		var name = e.target.files[0].name;
+		$('input:text', $(e.target).parent()).val(name);
+	});
 </script>
 @endcan
 

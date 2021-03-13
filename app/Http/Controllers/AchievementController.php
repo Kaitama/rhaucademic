@@ -6,6 +6,8 @@ use App\Achievement;
 use App\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\AchievementsImport;
 
 class AchievementController extends Controller
 {
@@ -33,6 +35,13 @@ class AchievementController extends Controller
 	public function create()
 	{
 		//
+	}
+
+	public function import(Request $request)
+	{
+		Excel::import(new AchievementsImport(), $request->file('excel'));
+		
+		return back()->with('success', 'Data prestasi berhasil di import.');
 	}
 	
 	/**

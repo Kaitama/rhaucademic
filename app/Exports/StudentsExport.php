@@ -151,6 +151,11 @@ class DataSantri extends DefaultValueBinder implements FromCollection, WithMappi
 			$cell->setValueExplicit($value, DataType::TYPE_STRING);
 			return true;
 		}
+
+		if (is_numeric($value)) {
+			$cell->setValueExplicit($value, DataType::TYPE_STRING);
+			return true;
+		}
 		
 		// else return default behavior
 		return parent::bindValue($cell, $value);

@@ -73,7 +73,7 @@ $months = ['1' => 'Januari', '2' => 'Februari', '3' => 'Maret', '4' => 'April', 
 		</div>
 		@else
 		<div class="ui teal message">
-			Menampilkan total {{$arrears->count()}} santri yang menunggak pembayaran uang sekolah bulan {{$months[$arrears->month]}} tahun {{$arrears->year}}.
+			Menampilkan {{$arrears->count()}} dari total {{$arrears->total()}} santri yang menunggak pembayaran uang sekolah bulan {{$months[$arrears->month]}} tahun {{$arrears->year}}.
 		</div>
 		<table class="ui celled table">
 			<thead>
@@ -89,9 +89,9 @@ $months = ['1' => 'Januari', '2' => 'Februari', '3' => 'Maret', '4' => 'April', 
 			</thead>
 			<tbody>
 				@php $no = 1 @endphp
-				@foreach ($arrears as $ar)
+				@foreach ($arrears as $k => $ar)
 				<tr>
-					<td>{{$no++}}</td>
+					<td>{{$arrears->firstItem() + $k}}</td>
 					<td>{{$ar->stambuk}}</td>
 					<td><a href="{{route('student.profile', $ar->stambuk)}}">{{$ar->name}}</a></td>
 					<td>{{$ar->classroom['name']}}</td>
@@ -102,7 +102,9 @@ $months = ['1' => 'Januari', '2' => 'Februari', '3' => 'Maret', '4' => 'April', 
 				
 				@endforeach
 			</tbody>
-		</table>		
+		</table>	
+		<div class="ui divider"></div>
+		{{$arrears->links()}}	
 		@endif
 		
 	</div>
