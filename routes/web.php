@@ -119,6 +119,8 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
 	->middleware('role_or_permission:developer|c asrama|u asrama|global delete');
 	Route::post('/excel/upload/data/dormroom', [DormroomController::class, 'import'])->name('excel.data.dormroom')
 	->middleware('role_or_permission:developer|c asrama|u asrama|global delete');
+	Route::get('/excel/download/template/dormroom', [DormroomController::class, 'template'])->name('excel.template.dormroom')
+	->middleware('role_or_permission:developer|c asrama|u asrama|global delete');
 	Route::get('/excel/export/dormroom', [DormroomController::class, 'export'])->name('excel.export.dormroom')
 	->middleware('role_or_permission:developer|r asrama');
 	
@@ -200,6 +202,7 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
 		Route::post('/classroom/addstudents', [ClassroomController::class, 'addstudents'])->name('classroom.addstudents');
 		Route::post('/classroom/removestudent', [ClassroomController::class, 'removestudent'])->name('classroom.removestudent');
 		Route::post('/excel/upload/data/classroom', [ClassroomController::class, 'import'])->name('excel.data.classroom');
+		Route::get('/excel/download/template/classroom', [ClassroomController::class, 'template'])->name('excel.template.classroom');
 		Route::get('/excel/export/classroom', [ClassroomController::class, 'export'])->name('excel.export.classroom');
 		
 		// MENU SANTRI

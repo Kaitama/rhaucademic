@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\DormroomImport;
 use App\Exports\DormroomExport;
+use App\Exports\StudentDormroomExport;
 
 class DormroomController extends Controller
 {
@@ -36,14 +37,22 @@ class DormroomController extends Controller
 
 	public function import(Request $request)
 	{
+		$this->validate($request, [
+			'excel'	=> 'required',
+		]);
 		Excel::import(new DormroomImport(), $request->file('excel'));
 		
-		return back()->with('success', 'Data asrama berhasil di import.');
+		return back()->with('success', 'Data santri di asrama berhasil diimport.');
 	}
 
 	public function export(Request $request)
 	{
 		return Excel::download(new DormroomExport(), 'DATA-ASRAMA-' . date('d-m-Y') . '.xlsx');
+	}
+
+	public function template()
+	{
+		return Excel::download(new StudentDormroomExport(), 'DATA-ASRAMA-SANTRI-' . date('d-m-Y') . '.xlsx');
 	}
 	
 	/**

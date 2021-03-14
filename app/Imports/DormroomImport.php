@@ -7,6 +7,7 @@ use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 
 use App\Dormroom;
+use App\Student;
 
 class DormroomImport implements ToModel, WithStartRow
 {
@@ -16,12 +17,20 @@ class DormroomImport implements ToModel, WithStartRow
 	public function model(array $row)
 	{
 		
-		return new Dormroom([
-			'building'	=> $row[1],
-			'name'	=> $row[2],
-			'capacity'	=> $row[3],
-			]
-		);		
+		$student = Student::where('stambuk', $row[2])->first();
+		if($student){
+		$student->update([
+			'dormroom_id'	=> $row[1],
+		]);
+	}
+		return $student;
+		
+		// return new Dormroom([
+		// 	'building'	=> $row[1],
+		// 	'name'	=> $row[2],
+		// 	'capacity'	=> $row[3],
+		// 	]
+		// );		
 	}
 	
 	public function startRow(): int

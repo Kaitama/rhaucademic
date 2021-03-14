@@ -33,6 +33,7 @@
 					</button>
 				</form>
 			</div>
+{{-- 
 			<div class="ui segment">
 				<div class="ui fluid basic buttons">
 					<div class="ui button dropdown">
@@ -49,14 +50,51 @@
 					</a>
 				</div>
 			</div>
+			 --}}
 		</div>
 		@endcan
 	</div>
 	
 	<div class="ten wide column">
 		<div class="ui segments">
-			<div class="ui grey segment menu">
-				<h3>Data Ruang Asrama</h3>
+			<div class="ui yellow segment menu">
+				<h3>Upload Massal</h3>
+			</div>
+
+			<div class="ui segment">
+				<p>Anda dapat menentukan asrama santri secara massal dengan mengupload file Excel pada form ini.</p>
+				<form action="{{route('excel.data.dormroom')}}" method="POST" id="form-upload-excel" class="ui form error" enctype="multipart/form-data">
+					@csrf
+					<div class="field required">
+						<label>File Excel</label>
+						<div class="ui action input @error('excel') error @enderror">
+							<input type="text" placeholder="Pilih file" readonly>
+							<input type="file" name="excel">
+							<div id="attach" class="ui icon button">
+								<i class="attach icon"></i>
+							</div>
+						</div>
+					</div>
+					
+						<button type="submit" class="ui green labeled icon right floated button">
+							<i class="file excel icon"></i>
+							Upload
+						</button>
+						<a href="{{route('excel.template.dormroom')}}" class="ui basic button">Download Template</a>
+				</form>
+			</div>
+			
+		</div>
+
+		<div class="ui segments">
+			<div class="ui grey segment">
+				<div class="ui header">Data Ruang Asrama</div>
+			</div>
+			<div class="ui segment right aligned">
+			<a href="{{route('excel.export.dormroom')}}" class="ui button labeled icon basic">
+				<i class="download icon"></i>
+				Export Excel
+			</a>
 			</div>
 			<div class="ui segment">
 				
@@ -173,7 +211,7 @@
 
 
 {{-- modal upload excel --}}
-<div class="ui tiny modal" id="modal-upload">
+{{-- <div class="ui tiny modal" id="modal-upload">
 	<div class="header">
 		Upload File Excel Asrama
 	</div>
@@ -203,7 +241,7 @@
 			<i class="checkmark icon"></i>
 		</div>
 	</div>
-</div>
+</div> --}}
 
 @endcan
 

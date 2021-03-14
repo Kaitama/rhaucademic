@@ -47,7 +47,7 @@
 				</form>
 			</div>
 
-			<div class="ui segment">
+			{{-- <div class="ui segment">
 				<div class="ui fluid basic buttons">
 					<div class="ui button dropdown">
 						<i class="upload icon"></i>
@@ -62,15 +62,51 @@
 						Export Excel
 					</a>
 				</div>
-			</div>
+			</div> --}}
 		</div>
 	</div>
 	
 	<div class="ten wide column">
 		<div class="ui segments">
+			<div class="ui yellow segment menu">
+				<h3>Upload Massal</h3>
+			</div>
+
+			<div class="ui segment">
+				<p>Anda dapat menentukan kelas santri secara massal dengan mengupload file Excel pada form ini.</p>
+				<form action="{{route('excel.data.classroom')}}" method="POST" id="form-upload-excel" class="ui form error" enctype="multipart/form-data">
+					@csrf
+					<div class="field required">
+						<label>File Excel</label>
+						<div class="ui action input @error('excel') error @enderror">
+							<input type="text" placeholder="Pilih file" readonly>
+							<input type="file" name="excel">
+							<div id="attach" class="ui icon button">
+								<i class="attach icon"></i>
+							</div>
+						</div>
+					</div>
+					
+						<button type="submit" class="ui green labeled icon right floated button">
+							<i class="file excel icon"></i>
+							Upload
+						</button>
+						<a href="{{route('excel.template.classroom')}}" class="ui basic button">Download Template</a>
+				</form>
+			</div>
+			
+		</div>
+
+		<div class="ui segments">
 			<div class="ui grey segment menu">
 				<h3>Data Ruang Kelas</h3>
 			</div>
+			<div class="ui segment right aligned">
+				<a href="{{route('excel.export.classroom')}}" class="ui button labeled icon basic">
+					<i class="download icon"></i>
+					Export Excel
+				</a>
+				</div>
 			<div class="ui segment">
 				@for ($i = 1; $i <= 8; $i++)
 				<h3 class="ui top attached segment grey inverted">

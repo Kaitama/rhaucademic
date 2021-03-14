@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ClassroomImport;
 use App\Exports\ClassroomExport;
+use App\Exports\StudentClassroomExport;
 
 class ClassroomController extends Controller
 {
@@ -45,6 +46,11 @@ class ClassroomController extends Controller
 	public function export(Request $request)
 	{
 		return Excel::download(new ClassroomExport(), 'DATA-KELAS-' . date('d-m-Y') . '.xlsx');
+	}
+
+	public function template()
+	{
+		return Excel::download(new StudentClassroomExport(), 'DATA-KELAS-SANTRI-' . date('d-m-Y') . '.xlsx');
 	}
 	
 	/**
