@@ -39,6 +39,8 @@ class DormroomController extends Controller
 	{
 		$this->validate($request, [
 			'excel'	=> 'required',
+		], [
+			'excel.required'	=> 'File excel tidak boleh kosong.'
 		]);
 		Excel::import(new DormroomImport(), $request->file('excel'));
 		

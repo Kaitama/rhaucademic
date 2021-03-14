@@ -38,6 +38,11 @@ class ClassroomController extends Controller
 
 	public function import(Request $request)
 	{
+		$this->validate($request, [
+			'excel'	=> 'required',
+		], [
+			'excel.required'	=> 'File excel tidak boleh kosong.'
+		]);
 		Excel::import(new ClassroomImport(), $request->file('excel'));
 		
 		return back()->with('success', 'Data kelas berhasil di import.');
