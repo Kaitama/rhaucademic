@@ -14,9 +14,16 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithStyles;
+use Maatwebsite\Excel\Concerns\WithCustomValueBinder;
+use Maatwebsite\Excel\Concerns\RegistersEventListeners;
+use PhpOffice\PhpSpreadsheet\Cell\Cell;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\Cell\DefaultValueBinder;
 
-class OffensesExport implements FromCollection, WithHeadings, ShouldAutoSize, WithMapping, WithColumnFormatting, WithStyles
+class OffensesExport extends DefaultValueBinder implements FromCollection, WithHeadings, ShouldAutoSize, WithMapping, WithColumnFormatting, WithStyles, WithCustomValueBinder
 {
+	use RegistersEventListeners;
+
 	protected $sdate = null;
 	protected $edate = null;
 	protected $no = 0;
@@ -63,6 +70,23 @@ class OffensesExport implements FromCollection, WithHeadings, ShouldAutoSize, Wi
 		return [
 			'B' => NumberFormat::FORMAT_DATE_DDMMYYYY,
 		];
+	}
+
+	public function bindValue(Cell $cell, $value)
+	{
+		
+		if(strlen((string)$value) > 14){ // if (is_numeric($value)) {
+			$cell->setValueExplicit($value, DataType::TYPE_STRING);
+			return true;
+		}
+
+		if (is_numeric($value)) {
+			$cell->setValueExplicit($value, DataType::TYPE_STRING);
+			return true;
+		}
+		
+		// else return default behavior
+		return parent::bindValue($cell, $value);
 	}
 	
 	public function headings() :array {
