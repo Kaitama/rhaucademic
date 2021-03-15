@@ -32,9 +32,10 @@ class OffensesExport implements FromCollection, WithHeadings, ShouldAutoSize, Wi
 		$offenses = Offense::where('student_id', '!=', null)->where('date', '>=', $this->sdate)->where('date', '<=', $this->edate)->orderBy('date')->get();
 		
 		foreach ($offenses as $offense) {
+			$offense->class = null;
 			$offense->stambuk = $offense->student['stambuk'];
 			$offense->studentname = $offense->student['name'];
-			$offense->class = $offense->student->classroom ? $offense->student->classroom['name'] : null;
+			if($offense->student->classroom) $offense->class = $offense->student->classroom['name'];
 			$offense->by = $offense->user['name'];
 		}
 		return $offenses;
