@@ -34,7 +34,7 @@ class OffensesExport implements FromCollection, WithHeadings, ShouldAutoSize, Wi
 		foreach ($offenses as $offense) {
 			$offense->stambuk = $offense->student['stambuk'];
 			$offense->studentname = $offense->student['name'];
-			$offense->class = $offense->student->classroom['name'];
+			$offense->class = $offense->student->classroom ? $offense->student->classroom['name'] : null;
 			$offense->by = $offense->user['name'];
 		}
 		return $offenses;
