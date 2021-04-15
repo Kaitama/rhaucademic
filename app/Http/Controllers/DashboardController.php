@@ -15,6 +15,7 @@ use App\Carrousel;
 use App\Student;
 use App\Organization;
 use App\Extracurricular;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -35,10 +36,12 @@ class DashboardController extends Controller
 		// 
 		$today = date('Y-m-d H:i:s');
 		// $tomorrow = date('Y-m-d H:i:s',strtotime($date1 . "+1 days"));
-		$offenses 	= Offense::where('date', date('Y-m-d'))->count();
-		$tuitions 	= Tuition::where('paydate', date('Y-m-d'))->count();
-		$checkouts	= Permit::where('checkout', '>=', date('Y-m-d'))->where('checkout', '<=', date('Y-m-d H:i:s'))->count();
-		$checkins		= Permit::where('checkin', '>=', date('Y-m-d'))->where('checkin', '<=', date('Y-m-d H:i:s'))->count();
+		$offenses 	= Offense::whereDate('created_at', Carbon::today())->count();
+		$tuitions 	= Tuition::whereDate('created_at', Carbon::today())->count();
+		$checkouts	= Permit::whereDate('checkout', Carbon::today())->count();
+		$checkins		= Permit::whereDate('checkin', Carbon::today())->count();
+		// $checkouts	= Permit::where('checkout', '>=', date('Y-m-d'))->where('checkout', '<=', date('Y-m-d H:i:s'))->count();
+		// $checkins		= Permit::where('checkin', '>=', date('Y-m-d'))->where('checkin', '<=', date('Y-m-d H:i:s'))->count();
 		$classrooms = Classroom::orderBy('level')->orderBy('name')->get();
 		$dormrooms	= Dormroom::orderBy('building')->orderBy('name')->get();
 		$carousels	= Carrousel::limit(5)->get();

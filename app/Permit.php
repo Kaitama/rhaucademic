@@ -10,6 +10,7 @@ class Permit extends Model
 {
 		//
 		protected $guarded = [];
+		protected $dates = ['checkin', 'checkout'];
 
 		// relation to student
 		public function student()
