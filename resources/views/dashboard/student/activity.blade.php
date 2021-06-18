@@ -192,8 +192,8 @@
 							}
 							@endphp
 							<div class="item">
-								<div class="ui sub header">{{$pos}} {{$org->name}}</div>
-								{{$org->organization_student->description}}
+								<div class="ui sub header">{{$pos}} {{$org->name ?? ''}}</div>
+								{{$org->organization_student->description ?? ''}}
 								<div class="description">Dari: {{date('d/m/Y', strtotime($org->organization_student->joindate))}} sampai {{$org->organization_student->outdate ? date('d/m/Y', strtotime($org->organization_student->outdate)) : 'sekarang'}}</div>
 							</div>
 							
@@ -240,10 +240,10 @@
 							}
 							@endphp
 							<div class="item">
-								<div class="ui sub header">{{$ext->name}}</div>
+								<div class="ui sub header">{{$ext->name ?? ''}}</div>
 								<div class="description">Dari: {{date('d/m/Y', strtotime($ext->extracurricular_student->joindate))}} sampai {{$ext->extracurricular_student->outdate ? date('d/m/Y', strtotime($ext->extracurricular_student->outdate)) : 'sekarang'}}</div>
 								<div class="description">Hari {{$d}} pukul {{date('H:i', strtotime($ext->time))}} WIB</div>
-								<div class="description">Dibina oleh {{$ext->user->name}}</div>
+								<div class="description">Dibina oleh {{$ext->user->name ?? '-'}}</div>
 							</div>
 							
 							

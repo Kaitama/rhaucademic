@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Student;
 use App\Classroom;
+use App\Organization;
+use App\Extracurricular;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ClassroomImport;
@@ -35,7 +37,7 @@ class ClassroomController extends Controller
 	{
 		//
 	}
-
+	
 	public function import(Request $request)
 	{
 		$this->validate($request, [
@@ -47,12 +49,12 @@ class ClassroomController extends Controller
 		
 		return back()->with('success', 'Data kelas berhasil di import.');
 	}
-
+	
 	public function export(Request $request)
 	{
 		return Excel::download(new ClassroomExport(), 'DATA-KELAS-' . date('d-m-Y') . '.xlsx');
 	}
-
+	
 	public function template()
 	{
 		return Excel::download(new StudentClassroomExport(), 'DATA-KELAS-SANTRI-' . date('d-m-Y') . '.xlsx');
@@ -77,14 +79,14 @@ class ClassroomController extends Controller
 			'class_capacity.required' => 'Kapasitas kelas tidak boleh kosong.',
 			'class_capacity.numeric'	=> 'kapasitas kelas hanya boleh angka.'
 		]);
-
-			Classroom::create([
-				'level'		=> $request->level,
-				'name'		=> $request->class_name,
-				'capacity'=> $request->class_capacity
-			]);
-
-			return back()->with('success', 'Data kelas berhasil ditambahkan.');
+		
+		Classroom::create([
+			'level'		=> $request->level,
+			'name'		=> $request->class_name,
+			'capacity'=> $request->class_capacity
+		]);
+		
+		return back()->with('success', 'Data kelas berhasil ditambahkan.');
 	}
 	
 	/**
@@ -130,14 +132,14 @@ class ClassroomController extends Controller
 			'capacity.required' => 'Kapasitas ruangan kelas tidak boleh kosong.',
 			'capacity.numeric'	=> 'kapasitas kelas hanya boleh angka.'
 		]);
-
-			Classroom::find($request->id)->update([
-				'level' 			=> $request->level,
-				'name'				=> $request->name,
-				'capacity'		=> $request->capacity
-			]);
-
-			return back()->with('success', 'Data kelas berhasil diubah.');
+		
+		Classroom::find($request->id)->update([
+			'level' 			=> $request->level,
+			'name'				=> $request->name,
+			'capacity'		=> $request->capacity
+		]);
+		
+		return back()->with('success', 'Data kelas berhasil diubah.');
 	}
 	
 	/**
@@ -153,7 +155,7 @@ class ClassroomController extends Controller
 		return back()->with('success', 'Data kelas berhasil dihapus.');
 		
 	}
-
+	
 	public function addstudents(Request $r)
 	{
 		$this->validate($r, ['students' => 'required'], ['students.required' => 'Santri tidak boleh kosong.']);
@@ -163,10 +165,46 @@ class ClassroomController extends Controller
 		}
 		return back()->with('success', 'Santri berhasil ditambahkan ke dalam kelas.');
 	}
-
+	
 	public function removestudent(Request $r)
 	{
 		Student::find($r->idtoremove)->update(['classroom_id' => null]);
 		return back();
+	}
+	
+	public function deactivatestudents(Request $request){
+		$students = Student::where('classroom_id', $request->classid)->get();
+		if($request->permanent){
+			
+			foreach ($students as $student) {
+				
+				$orgs = Organization::all();
+				foreach($orgs as $org){
+					$org->student()->wherePivot('isactive', true)->updateExistingPivot($student->id, ['outdate'=> date('Y-m-d'), 'isactive' => false]);
+				}
+				$exts = Extracurricular::all();
+				foreach($exts as $ext){
+					$ext->student()->wherePivot('isactive', true)->updateExistingPivot($student->id, ['outdate'=> date('Y-m-d'), 'isactive' => false]);
+				}
+
+				$student->update([
+					'classroom_id'	=> null,
+					'dormroom_id' => null,
+					'status' => $request->status,
+					'description'	=> $request->description,
+				]);
+				
+			}
+		} else {
+			foreach ($students as $student) {
+				$student->update([
+					'status' => $request->status,
+					'description'	=> $request->description,
+					]
+				);
+			}
+		}
+		return back()->with('success', 'Semua santri berhasil dinonaktifkan.');
+		
 	}
 }

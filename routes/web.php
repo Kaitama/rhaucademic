@@ -18,6 +18,7 @@ use App\Http\Controllers\DatareportController;
 use App\Http\Controllers\ExtracurricularController;
 use App\Http\Controllers\CarrouselController;
 use App\Http\Controllers\UserlogController;
+use App\Http\Controllers\DebugController;
 
 
 
@@ -204,6 +205,7 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
 		Route::post('/excel/upload/data/classroom', [ClassroomController::class, 'import'])->name('excel.data.classroom');
 		Route::get('/excel/download/template/classroom', [ClassroomController::class, 'template'])->name('excel.template.classroom');
 		Route::get('/excel/export/classroom', [ClassroomController::class, 'export'])->name('excel.export.classroom');
+		Route::post('/classroom/deactivate-students', [ClassroomController::class, 'deactivatestudents'])->name('classroom.deactivatestudents');
 		
 		// MENU SANTRI
 		Route::post('/student/deactivate', [StudentController::class, 'deactivate'])->name('student.deactivate');
@@ -256,5 +258,8 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
 		Route::post('/permission/store', [PermissionController::class, 'store'])->name('permission.store');
 		Route::get('/permission/destroy/{id}', [PermissionController::class, 'destroy'])->name('permission.destroy');
 		Route::post('/permission/assign', [PermissionController::class, 'assign'])->name('permission.assign');
+
+		// DEBUG CONTROLLER
+		// Route::get('/update/stambuk/mass', [DebugController::class, 'stambuk'])->name('stambuk.mass');
 	});
 });

@@ -36,6 +36,60 @@
 		<div class="ui message">Belum ada santri terdaftar di kelas ini.</div>
 		@else
 		
+		@can('m basdat')
+		<div id="btn-deactivate" class="ui labeled icon red button">
+			<i class="ui exclamation icon"></i>
+			NONAKTIFKAN SEMUA SANTRI
+		</div>
+		
+		{{-- modal deactivate --}}
+		<div class="ui tiny modal" id="modal-deactivate">
+			<div class="header">
+				Nonaktifkan Semua Santri
+			</div>
+			<div class="content">
+				<div class="ui message red">Anda yakin ingin menonaktifkan semua santri di kelas ini?</div>
+				<form action="{{route('classroom.deactivatestudents')}}" method="post" id="form-deactivate" class="ui form">
+					@csrf
+					<input type="hidden" name="classid" value="{{ $classroom->id }}">
+					<div class="field">
+						<label>Alasan</label>
+						<select name="status" class="ui dropdown">
+							<option value="2">ALUMNI</option>
+							<option value="3">SKORSING</option>
+							<option value="4">CUTI</option>
+							<option value="5">SAKIT</option>
+							<option value="6">AKADEMIK</option>
+							<option value="7">EKONOMI</option>
+							<option value="8">LAINNYA</option>
+						</select>
+					</div>
+					<div class="field">
+						<label>Keterangan</label>
+						<textarea name="description" rows="3">{{old('description')}}</textarea>
+					</div>
+					<div class="field">
+						<div class="ui checkbox">
+							<input type="checkbox" name="permanent" tabindex="0" class="hidden" checked>
+							<label>Nonaktif permanen</label>
+						</div>
+					</div>	
+				</form>
+				
+			</div>
+			<div class="actions">
+				<div class="ui black deny button">
+					Batal
+				</div>
+				<div class="ui negative right labeled icon button" onclick="document.getElementById('form-deactivate').submit()">
+					Nonaktifkan
+					<i class="checkmark icon"></i>
+				</div>
+			</div>
+		</div>
+		
+		@endcan
+		
 		<table class="ui black table">
 			<thead>
 				<tr>
@@ -85,19 +139,27 @@
 	</div>
 </div>
 
+@can('m basdat')
 <form id="form-remove-student" action="{{route('classroom.removestudent')}}" method="post" style="display: none">
 	@csrf
 	<input type="hidden" name="idtoremove" value="">
 </form>
+@endcan
 
 @endsection
 
 @section('pagescript')
+@can('m basdat')
 <script>
 	function removeStudent(id)
 	{
 		$('input[name=idtoremove]').val(id);
 		$('#form-remove-student').submit();
 	}
+	$('#btn-deactivate').click(function(){
+		$('#modal-deactivate').modal('show');
+		$('.opt.dropdown').dropdown({action: 'select'});
+	})
 </script>
+@endcan
 @endsection
